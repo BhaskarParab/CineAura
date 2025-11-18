@@ -19,14 +19,14 @@ function DarkToggle(){
     <div className="justify-self-center">
     {isDark ? (
         <Sun
-          size={35}
+          size={30}
           className="cursor-pointer select-none"
           style={{ color: "white" }}
           onClick={handleToggle}
         />
       ) : (
         <Moon
-          size={35}
+          size={30}
           className="cursor-pointer select-none"
           style={{ color: "black" }}
           onClick={handleToggle}

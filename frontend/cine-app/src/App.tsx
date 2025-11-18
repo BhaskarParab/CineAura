@@ -1,3 +1,4 @@
+import Footer from "./components/Footer/Footer"
 import Navbar from "./components/Navbar/Navbar"
 import "./Globals.css"
 
@@ -6,7 +7,14 @@ function App() {
 
   return (
     <>
-    <Navbar/>
+    <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
+      
+      <Navbar />
+      <main className="grow">
+
+      </main>
+      <Footer />
+    </div>
     </>
   )
 }
