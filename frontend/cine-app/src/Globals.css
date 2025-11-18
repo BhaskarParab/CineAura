@@ -3,9 +3,22 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --text-primary
+  --color-text-primary: #1e1e1e;
+  --color-bg-primary: #fff
 }
 
-body{
-  background-color: #1e1e1e;
+@layer theme{
+  .dark {
+  --color-text-primary: #fff;
+  --color-bg-primary: #1e1e1e
 }
+}
+
+:root {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* body{
+  background-color: #1e1e1e;
+} */
