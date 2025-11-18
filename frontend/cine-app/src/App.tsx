@@ -1,4 +1,5 @@
 import Footer from "./components/Footer/Footer"
+import Home from "./components/Home/Home"
 import Navbar from "./components/Navbar/Navbar"
 import "./Globals.css"
 
@@ -11,7 +12,7 @@ function App() {
       
       <Navbar />
       <main className="grow">
-
+        <Home/>
       </main>
       <Footer />
     </div>
