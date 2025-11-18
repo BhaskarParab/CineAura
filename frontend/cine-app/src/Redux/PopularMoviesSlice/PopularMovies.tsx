@@ -1,0 +1,45 @@
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
+export interface MovieType {
+  adult?: boolean;
+  backdrop_path?: string;
+  genre_ids?: number[];
+  id: number;
+  original_language?: string;
+  overview: string;
+  popularity?: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
+  video?: boolean;
+  vote_average: number;
+  vote_count?: number;
+}
+
+export interface PopularMoviesType{
+  page: number;
+  results: MovieType[];
+  total_pages: number;
+  total_results: number;
+}
+
+interface DataStoreType {
+  data: PopularMoviesType[];
+}
+
+const initialState: DataStoreType = {
+  data: [],
+};
+
+const popularMovies = createSlice({
+  name: "popularMovies",
+  initialState,
+  reducers: {
+    storeData: (state, action: PayloadAction<PopularMoviesType[]>) => {
+      state.data = action.payload;
+    },
+  },
+});
+
+export const { storeData } = popularMovies.actions;
+export default popularMovies;

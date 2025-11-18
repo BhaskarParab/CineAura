@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-text-primary: #1e1e1e;
+  --color-bg-primary: #fff
+}
+
+@layer theme{
+  .dark {
+  --color-text-primary: #fff;
+  --color-bg-primary: #1e1e1e
+}
+}
+
+:root {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+html, body, #root {
+  height: 100%;
+}
