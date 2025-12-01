@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const savedTheme = localStorage.getItem("theme");
+
 interface DarkType{
-  value: boolean
+  value: "light" | "dark"
 }
 
 const initialState: DarkType = {
-  value: false,
+  value: savedTheme === "dark" ? "dark" : "light",
 }
 
 const darkThemeSlice = createSlice({
@@ -13,7 +15,8 @@ const darkThemeSlice = createSlice({
   initialState,
   reducers: {
     darkToggle: (state) => {
-      state.value = !state.value
+      state.value = state.value === "dark" ? "light" : "dark";
+      localStorage.setItem("theme", state.value)
     }
   }
 })

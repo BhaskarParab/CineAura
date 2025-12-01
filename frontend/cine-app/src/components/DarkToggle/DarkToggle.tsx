@@ -17,7 +17,7 @@ function DarkToggle(){
   return(
     <>
     <div className="justify-self-center">
-    {isDark ? (
+    {isDark === 'dark' ? (
         <Sun
           size={30}
           className="cursor-pointer select-none"
