@@ -24,22 +24,22 @@ export interface PopularMoviesType{
 }
 
 interface DataStoreType {
-  data: PopularMoviesType[];
+  data: MovieType[];
 }
 
 const initialState: DataStoreType = {
   data: [],
 };
 
-const popularMovies = createSlice({
+const popularMoviesSlice = createSlice({
   name: "popularMovies",
   initialState,
   reducers: {
-    storeData: (state, action: PayloadAction<PopularMoviesType[]>) => {
+    storeData: (state, action: PayloadAction<MovieType[]>) => {
       state.data = action.payload;
     },
   },
 });
 
-export const { storeData } = popularMovies.actions;
-export default popularMovies;
+export const { storeData } = popularMoviesSlice.actions;
+export default popularMoviesSlice;

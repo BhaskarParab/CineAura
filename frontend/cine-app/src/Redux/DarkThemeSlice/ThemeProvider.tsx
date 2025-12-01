@@ -5,15 +5,11 @@ import type { RootState } from "../Store";
 
 function ThemeProvider({children}: {children: React.ReactNode}){
 
-  const isDark = useSelector((state: RootState) => state.darkTheme.value);
+  const theme = useSelector((state: RootState) => state.darkTheme.value);
 
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDark]);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
 
   return(
     <>

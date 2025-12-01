@@ -3,16 +3,49 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-text-primary: #1e1e1e;
-  --color-bg-primary: #fff
+  /* Backgrounds */
+  --color-bg-primary: #F7F7F5;      /* Soft neutral (no harsh white) */
+  --color-bg-secondary: #FFFFFF;    /* Clean surface white */
+  --color-card: #F2F2F0;            /* Subtle card background */
+  --color-bg-tertiary: #EAEAE7;     /* Soft section separators */
+  --color-bg-inverted: #FCFCFA;     /* For inverted components */
+
+  /* Text */
+  --color-text-primary: #1A1A1A;    /* Soft black (no pure #000) */
+  --color-text-secondary: #4A4A4A;  /* Gentle gray */
+  --color-muted: #777777;           /* Muted text */
+
+  /* Borders */
+  --color-border: #D8D8D5;          /* Low-contrast border */
+
+  /* Accent */
+  --color-accent: #3A7AFE;          /* Softer blue (eye-friendly) */
+  --color-text-amber: #E99B3A;
+
+  /* Screen breakpoints for responsive design */
+  --breakpoint-xs-393: 393px;
+  --breakpoint-xs-430: 430px;
+  --breakpoint-xs-480: 480px;
+  --breakpoint-tab-820: 820px;
+  --breakpoint-desk-1559: 1559px;
 }
 
-@layer theme{
+@layer theme {
   .dark {
-  --color-text-primary: #fff;
-  --color-bg-primary: #1e1e1e
+    --color-text-primary: #f5f5f5;
+    --color-text-secondary: #cfcfcf;
+    --color-bg-primary: #0e0e0e;
+    --color-bg-secondary: #1a1a1a;
+    --color-card: #111111;
+    --color-border: #2c2c2c;
+    --color-accent: #3b82f6;
+    --color-muted: #6b7280;
+    --color-bg-inverted: #ececec;
+    --color-bg-tertiary: #262626;
+    --color-text-amber: #fcd34d;
+  }
 }
-}
+
 
 :root {
   background-color: var(--color-bg-primary);
@@ -21,4 +54,9 @@
 
 html, body, #root {
   height: 100%;
+}
+
+.split-hidden {
+  opacity: 0;
+  visibility: hidden;
 }
