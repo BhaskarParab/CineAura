@@ -9,23 +9,34 @@ import PersonDetail from "./components/PersonDetail/PersonDetail";
 import Loader from "./components/Loader/Loader";
 import ScrollToTop from "./ScrollToTop";
 import SeriesDetail from "./components/WebSeries/SeriesDetail";
+import SearchResult from "./components/SearchResult/SearchResult";
 
 function App() {
   return (
     <Router>
-      <ScrollToTop/>
+      <ScrollToTop />
       <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
         <Navbar />
         <main className="flex-auto">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/movie/:id/:slug" element={<MovieDetail />} />
-            <Route path="/About" element={<About/>}/>
-            <Route path="/movie/:movieId/person/:personId/:slug" element={<PersonDetail/>} />
-            <Route path="/webseries/:seriesId/person/:personId/:slug" element={<PersonDetail/>} />
-            <Route path="/webseries/:id/:slug" element={<SeriesDetail/>} />
+            <Route path="/about" element={<About />} />
+            <Route
+              path="/movie/:movieId/person/:personId/:slug"
+              element={<PersonDetail />}
+            />
+            <Route
+              path="/webseries/:seriesId/person/:personId/:slug"
+              element={<PersonDetail />}
+            />
+            <Route path="/person/:personId/:slug" element={<PersonDetail />} />
+            <Route path="/webseries/:id/:slug" element={<SeriesDetail />} />
+            <Route path="/results/:slug" element={<SearchResult />} />
+            <Route path="/results/:slug/:slug" element={<SearchResult />} />
+            <Route path="/results" element={<SearchResult />} />
           </Routes>
-          <Loader/>
+          <Loader />
         </main>
         <Footer />
       </div>
