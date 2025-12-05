@@ -300,8 +300,8 @@ function PersonDetail() {
               }}
             ></div>
           ) : (
-            <div className="bg-bg-secondary h-full w-full items-center justify-items-center">
-              <span className="text-muted">No Profile Image Available</span>
+            <div className="bg-bg-secondary flex h-full w-full items-center justify-center">
+              <span className="text-text-secondary">No Profile Image Available</span>
             </div>
           )}
           <div
@@ -324,7 +324,7 @@ function PersonDetail() {
                 ) : (
                   <div className="bg-bg-secondary h-[450px] flex items-center justify-center">
                     <span className="text-muted">
-                      No Profile Image Available
+                      No Image
                     </span>
                   </div>
                 )}

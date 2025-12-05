@@ -253,7 +253,7 @@ function Home() {
         xl:w-[950px] xl:h-[500px]
       "
         >
-          <h1 className="text-2xl md:text-4xl font-bold">Top Web Series</h1>
+          <h1 className="text-2xl md:text-4xl font-bold">Top Series</h1>
           <div
             className="shadow-xl flex h-full transition-transform duration-500 mt-2 ease-in-out"
             style={{ transform: `translateX(-${currentSeriesIndex * 100}%)` }}

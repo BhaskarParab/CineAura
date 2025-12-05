@@ -5,6 +5,8 @@ import MovieId from "./MovieIdSlice/MovieId";
 import loaderSlice from "./LoaderSlice/LoaderSlice";
 import seriesSlice from "./SeriesSlice/PopularSeriesSlice";
 import storeSeasonsSlice from "./SeriesSlice/StoreSeasonsSlice";
+import SearchDataSlice from "./SearchDataStoreSlice/SearchDataStoreSlice";
+import filteredResultsSlice from "./FilteredResultsSlice/FilteredResultsSlice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ const store = configureStore({
     loader: loaderSlice.reducer,
     seriesData: seriesSlice.reducer,
     storeSeasons: storeSeasonsSlice.reducer,
+    searchStoreData: SearchDataSlice.reducer,
+    filteredResults: filteredResultsSlice.reducer,
   },
   // devTools: process.env.NODE_ENV !== 'production',
 })

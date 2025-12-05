@@ -11,8 +11,8 @@ interface PersonType {
 
 function MovieDetail() {
   const apiKey = import.meta.env.VITE_API_KEY;
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Get movie ID from URL parameters
   const { id } = useParams<{ id: string }>();
@@ -28,7 +28,7 @@ function MovieDetail() {
     if (!id) return;
 
     async function fetchMovieData() {
-      dispatch(showLoader())
+      dispatch(showLoader());
       try {
         const res = await fetch(
           `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&append_to_response=videos,credits,reviews`
@@ -38,7 +38,7 @@ function MovieDetail() {
       } catch (error) {
         console.error("Error fetching movie data:", error);
       } finally {
-        dispatch(hideLoader())
+        dispatch(hideLoader());
       }
     }
 
@@ -76,7 +76,9 @@ function MovieDetail() {
   // Get cast members (either top 10 or all based on state)
   const getCast = () => {
     if (!movieData?.credits?.cast) return [];
-    return showAllCast ? movieData.credits.cast : movieData.credits.cast.slice(0, 10);
+    return showAllCast
+      ? movieData.credits.cast
+      : movieData.credits.cast.slice(0, 10);
   };
 
   // Get director(s)
@@ -102,9 +104,9 @@ function MovieDetail() {
   };
 
   const handlePerson = (person: PersonType, movie: MovieDetailType) => {
-  const slug = person.name.toLowerCase().replace(/\s+/g, "-");
-  navigate(`/movie/${movie.id}/person/${person.id}/${slug}`);
-};
+    const slug = person.name.toLowerCase().replace(/\s+/g, "-");
+    navigate(`/movie/${movie.id}/person/${person.id}/${slug}`);
+  };
 
   if (!movieData) {
     return (
@@ -138,16 +140,14 @@ function MovieDetail() {
               }}
             ></div>
           )}
-          <div
-            className="absolute inset-0 bg-linear-to-t from-black/70 from-10% to-transparent"
-          ></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 from-10% to-transparent"></div>
         </div>
 
         {/* Movie Title and Basic Info */}
         <div className="relative container mx-auto px-4 -mt-20 md:-mt-32">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Poster */}
-            <div className="md:w-1/3 lg:w-1/4">
+            <div className="md:w-1/3 lg:w-1/4 flex-shrink-0">
               <div className="rounded-xl overflow-hidden shadow-2xl transform transition-all duration-300">
                 {movieData.poster_path ? (
                   <img
@@ -164,18 +164,18 @@ function MovieDetail() {
             </div>
 
             {/* Movie Info */}
-            <div className="md:w-2/3 lg:w-3/4 pb-6">
-              <h1 className="text-4xl md:text-4xl font-bold mb-2 text-text-primary sm:text-white">
+            <div className="md:w-2/3 lg:w-3/4 pb-6 flex flex-col">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 text-text-primary sm:text-white break-words">
                 {movieData.title}
               </h1>
-              <div className="min-h-6 mb-4">
+
               {movieData.tagline && (
-                <p className="text-xlgray text-text-secondary sm:text-gray-300 italic mb-4">
+                <p className="text-xl text-text-secondary sm:text-gray-300 italic mb-4 break-words">
                   "{movieData.tagline}"
                 </p>
               )}
-              </div>
-              <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6 lg:mt-6 tab-820:mt-2">
+
+              <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6">
                 <span>{formatDate(movieData.release_date)}</span>
                 <span>•</span>
                 <span>{formatRuntime(movieData.runtime)}</span>
@@ -184,7 +184,7 @@ function MovieDetail() {
               </div>
 
               {/* Overview */}
-              <div className="mb-6">
+              <div className="mb-6 mt-10">
                 <h2 className="text-2xl font-bold mb-4 text-text-primary">
                   Overview
                 </h2>
@@ -366,11 +366,11 @@ function MovieDetail() {
             {cast.length > 0 && (
               <div className="mb-8">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold text-text-primary">
-                    Cast
-                  </h2>
+                  <h2 className="text-2xl font-bold text-text-primary">Cast</h2>
                   <div className="text-text-secondary text-sm">
-                    Showing {showAllCast ? cast.length : Math.min(10, cast.length)} of {movieData.credits?.cast?.length || 0} cast members
+                    Showing{" "}
+                    {showAllCast ? cast.length : Math.min(10, cast.length)} of{" "}
+                    {movieData.credits?.cast?.length || 0} cast members
                   </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -402,18 +402,21 @@ function MovieDetail() {
                     </div>
                   ))}
                 </div>
-                
+
                 {/* Show More/Less Button */}
-                {movieData.credits?.cast && movieData.credits.cast.length > 10 && (
-                  <div className="mt-6 text-center">
-                    <button
-                      onClick={() => setShowAllCast(!showAllCast)}
-                      className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
-                    >
-                      {showAllCast ? "Show Less" : `Show All Cast (${movieData.credits.cast.length})`}
-                    </button>
-                  </div>
-                )}
+                {movieData.credits?.cast &&
+                  movieData.credits.cast.length > 10 && (
+                    <div className="mt-6 text-center">
+                      <button
+                        onClick={() => setShowAllCast(!showAllCast)}
+                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
+                      >
+                        {showAllCast
+                          ? "Show Less"
+                          : `Show All Cast (${movieData.credits.cast.length})`}
+                      </button>
+                    </div>
+                  )}
               </div>
             )}
 

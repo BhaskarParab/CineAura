@@ -48,10 +48,10 @@ function Navbar() {
             About
           </a>
           <a
-            href="#movies"
-            className="text-base sm:text-lg font-medium hover:opacity-70 transition"
+            onClick={() => navigate("/results")}
+            className="cursor-pointer text-base sm:text-lg font-medium hover:opacity-70 transition"
           >
-            Movies
+            Explore
           </a>
         </div>
 
@@ -115,7 +115,7 @@ function Navbar() {
               Home
             </a>
             <a
-              onClick={() => handleNavigation("/About")}
+              onClick={() => handleNavigation("/about")}
               className="cursor-pointer font-medium hover:opacity-70 transition py-2"
             >
               About

@@ -212,7 +212,7 @@ function SeriesDetail() {
                   </p>
                 </div>
               )}
-              <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6 lg:mt-6 tab-820:mt-2">
+              {/* <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6 lg:mt-6 tab-820:mt-2">
                 <span>{formatDate(seriesData.first_air_date)}</span>
                 <span>•</span>
                 <span>
@@ -226,10 +226,10 @@ function SeriesDetail() {
                 </span>
                 <span>•</span>
                 <span>{seriesData.original_language.toUpperCase()}</span>
-              </div>
+              </div> */}
 
               {/* Overview */}
-              <div className="mb-6">
+              <div className="mb-6 mt-14">
                 <h2 className="text-2xl font-bold mb-4 text-text-primary lg:mt-10">
                   Overview
                 </h2>

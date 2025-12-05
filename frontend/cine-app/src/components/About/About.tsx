@@ -127,7 +127,7 @@ function About() {
 
         <div className="mt-100">
           <div className="overflow-hidden">
-            <hr id="line" className="border-2 bg-bg-primary mb-10"></hr>
+            <hr id="line" className="border-2 border-text-secondary mb-10"></hr>
           </div>
           <h1 className="justify-self-center text-5xl font-thin mb-20">API</h1>
           <div className="flex gap-2">
