@@ -147,7 +147,7 @@ function MovieDetail() {
         <div className="relative container mx-auto px-4 -mt-20 md:-mt-32">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Poster */}
-            <div className="md:w-1/3 lg:w-1/4 flex-shrink-0">
+            <div className="md:w-1/3 lg:w-1/4 shrink-0">
               <div className="rounded-xl overflow-hidden shadow-2xl transform transition-all duration-300">
                 {movieData.poster_path ? (
                   <img
@@ -165,12 +165,12 @@ function MovieDetail() {
 
             {/* Movie Info */}
             <div className="md:w-2/3 lg:w-3/4 pb-6 flex flex-col">
-              <h1 className="text-3xl md:text-4xl font-bold mb-2 text-text-primary sm:text-white break-words">
+              <h1 className="text-3xl md:text-2xl lg:text-4xl font-bold mb-2 text-text-primary sm:text-white wrap-break-words">
                 {movieData.title}
               </h1>
 
               {movieData.tagline && (
-                <p className="text-xl text-text-secondary sm:text-gray-300 italic mb-4 break-words">
+                <p className="text-xl text-text-secondary sm:text-gray-300 italic mb-2 wrap-break-words">
                   "{movieData.tagline}"
                 </p>
               )}
@@ -184,7 +184,7 @@ function MovieDetail() {
               </div>
 
               {/* Overview */}
-              <div className="mb-6 mt-10">
+              <div className="mb-6 mt-11">
                 <h2 className="text-2xl font-bold mb-4 text-text-primary">
                   Overview
                 </h2>
@@ -239,7 +239,7 @@ function MovieDetail() {
                   {movieData.genres.map((genre) => (
                     <span
                       key={genre.id}
-                      className="bg-muted bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-text-primary font-medium hover:bg-opacity-30 transition-all"
+                      className="bg-bg-secondary bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-text-primary font-medium hover:bg-opacity-30"
                     >
                       {genre.name}
                     </span>

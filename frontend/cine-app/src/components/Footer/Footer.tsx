@@ -47,7 +47,7 @@ function Footer() {
               <a className="opacity-80 hover:opacity-100 cursor-pointer">Terms of Service</a>
             </li>
             <li>
-              <a className="opacity-80 hover:opacity-100 cursor-pointer">Contact</a>
+              <a href="mailto:bhaskarrparab@gmail.com" className="opacity-80 hover:opacity-100 cursor-pointer">Contact</a>
             </li>
           </ul>
         </div>

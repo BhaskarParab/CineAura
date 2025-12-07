@@ -163,6 +163,7 @@ function SearchResult() {
   const [yearTo, setYearTo] = useState<number>(new Date().getFullYear());
   const [filtersAreActive, setFiltersAreActive] = useState<boolean>(false);
   const [searchTrigger, setSearchTrigger] = useState<number>(0);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // State for validation errors
   const [genreError, setGenreError] = useState<boolean>(false);
@@ -171,72 +172,75 @@ function SearchResult() {
   const maxYear = new Date().getFullYear();
 
   // Function to fetch filtered data
-  const fetchFilteredResults = useCallback(async (
-    genres: number[],
-    countries: string[],
-    fromYear: number,
-    toYear: number
-  ) => {
-    dispatch(showLoader());
-    try {
-      const tvGenreIds = mapMovieToTVGenres(genres);
+  const fetchFilteredResults = useCallback(
+    async (
+      genres: number[],
+      countries: string[],
+      fromYear: number,
+      toYear: number
+    ) => {
+      dispatch(showLoader());
+      try {
+        const tvGenreIds = mapMovieToTVGenres(genres);
 
-      const moviePromises = [];
-      const seriesPromises = [];
+        const moviePromises = [];
+        const seriesPromises = [];
 
-      for (let page = 1; page <= 5; page++) {
-        // MODIFIED: Build movie URL conditionally with country filter
-        let movieURL = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genres.join(
-          ","
-        )}&primary_release_date.gte=${fromYear}-01-01&primary_release_date.lte=${toYear}-12-31&page=${page}`;
+        for (let page = 1; page <= 5; page++) {
+          // MODIFIED: Build movie URL conditionally with country filter
+          let movieURL = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genres.join(
+            ","
+          )}&primary_release_date.gte=${fromYear}-01-01&primary_release_date.lte=${toYear}-12-31&page=${page}`;
 
-        // Add country filter only if countries are selected
-        if (countries.length > 0) {
-          movieURL += `&with_origin_country=${countries.join(",")}`;
+          // Add country filter only if countries are selected
+          if (countries.length > 0) {
+            movieURL += `&with_origin_country=${countries.join(",")}`;
+          }
+
+          moviePromises.push(fetch(movieURL));
         }
 
-        moviePromises.push(fetch(movieURL));
-      }
+        for (let page = 1; page <= 5; page++) {
+          // MODIFIED: Build series URL conditionally with country filter
+          let seriesURL = `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&with_genres=${tvGenreIds.join(
+            ","
+          )}&first_air_date.gte=${fromYear}-01-01&first_air_date.lte=${toYear}-12-31&page=${page}`;
 
-      for (let page = 1; page <= 5; page++) {
-        // MODIFIED: Build series URL conditionally with country filter
-        let seriesURL = `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&with_genres=${tvGenreIds.join(
-          ","
-        )}&first_air_date.gte=${fromYear}-01-01&first_air_date.lte=${toYear}-12-31&page=${page}`;
+          // Add country filter only if countries are selected
+          if (countries.length > 0) {
+            seriesURL += `&with_origin_country=${countries.join(",")}`;
+          }
 
-        // Add country filter only if countries are selected
-        if (countries.length > 0) {
-          seriesURL += `&with_origin_country=${countries.join(",")}`;
+          seriesPromises.push(fetch(seriesURL));
         }
 
-        seriesPromises.push(fetch(seriesURL));
+        const [movieResponses, seriesResponses] = await Promise.all([
+          Promise.all(moviePromises),
+          Promise.all(seriesPromises),
+        ]);
+
+        let allMovies: SearchMovie[] = [];
+        for (const res of movieResponses) {
+          const data = await res.json();
+          allMovies = [...allMovies, ...(data.results || [])];
+        }
+
+        let allSeries: SearchSeries[] = [];
+        for (const res of seriesResponses) {
+          const data = await res.json();
+          allSeries = [...allSeries, ...(data.results || [])];
+        }
+
+        dispatch(setFilteredMovies(allMovies));
+        dispatch(setFilteredSeries(allSeries));
+      } catch (err) {
+        console.error("Filter error:", err);
+      } finally {
+        dispatch(hideLoader());
       }
-
-      const [movieResponses, seriesResponses] = await Promise.all([
-        Promise.all(moviePromises),
-        Promise.all(seriesPromises),
-      ]);
-
-      let allMovies: SearchMovie[] = [];
-      for (const res of movieResponses) {
-        const data = await res.json();
-        allMovies = [...allMovies, ...(data.results || [])];
-      }
-
-      let allSeries: SearchSeries[] = [];
-      for (const res of seriesResponses) {
-        const data = await res.json();
-        allSeries = [...allSeries, ...(data.results || [])];
-      }
-
-      dispatch(setFilteredMovies(allMovies));
-      dispatch(setFilteredSeries(allSeries));
-    } catch (err) {
-      console.error("Filter error:", err);
-    } finally {
-      dispatch(hideLoader());
-    }
-  },[apiKey, dispatch]);
+    },
+    [apiKey, dispatch]
+  );
 
   // Check for URL parameters on component mount
   useEffect(() => {
@@ -459,14 +463,37 @@ function SearchResult() {
     );
   };
 
-  // ===================== RENDER =====================
   return (
     <div className="min-h-screen mt-22 sm:mt-20 md:mt-16 bg-bg-primary text-text-primary p-4 md:p-8">
       {/* FILTER FORM */}
       <form className="container mx-auto" onSubmit={handleFilterSubmit}>
-        <div className="bg-bg-secondary shadow-sm p-6 rounded-lg">
+        <div className="bg-bg-secondary shadow-sm p-4 rounded-lg">
+          <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Filter</h1>
-
+          <button
+            type="button"
+            className="md:hidden cursor-pointer flex items-center justify-self-center w-8 h-8 p-2 bg-bg-tertiary rounded-full"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            <svg
+              className={`w-5 h-5 transform transition-transform ${
+                isFilterOpen ? "rotate-180" : ""
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+          </div>
+          <div className={`${!isFilterOpen && "hidden md:block"}`}>
           {/* GENRE */}
           <h1 className="text-lg font-semibold mt-6">Genre</h1>
 
@@ -566,6 +593,7 @@ function SearchResult() {
                 Reset Filters
               </button>
             )}
+          </div>
           </div>
         </div>
       </form>

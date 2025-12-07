@@ -164,7 +164,7 @@ function SeriesDetail() {
   const topReviews = getTopReviews();
 
   return (
-    <div className="bg-bg-primary text-text-primary mt-16 min-h-screen">
+    <div className="bg-bg-primary text-text-primary mt-14 min-h-screen">
       {/* Hero Section with Backdrop */}
       <div className="relative">
         {/* Backdrop Image Container */}
@@ -202,17 +202,25 @@ function SeriesDetail() {
 
             {/* Series Info */}
             <div className="md:w-2/3 lg:w-3/4 pb-6">
-              <h1 className="text-4xl md:text-5xl font-bold mb-2 text-text-primary sm:text-white">
+              <h1 className="text-4xl md:text-2xl lg:text-4xl font-bold mb-2 text-text-primary sm:text-white">
                 {seriesData.name}
               </h1>
               {seriesData.tagline && (
                 <div className="mb-4">
-                  <p className="text-xlgray text-text-secondary sm:text-gray-300 italic mb-4">
+                  <p
+                    className={`${
+                      seriesData.tagline.length < 20
+                        ? "md:text-lg" // short
+                        : seriesData.tagline.length <= 50
+                        ? "md:text-sm" // medium
+                        : "md:text-sm" // long
+                    } text-text-secondary sm:text-gray-300 italic mb-4`}
+                  >
                     "{seriesData.tagline}"
                   </p>
                 </div>
               )}
-              {/* <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6 lg:mt-6 tab-820:mt-2">
+              <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6 lg:mt-6 tab-820:-mt-2">
                 <span>{formatDate(seriesData.first_air_date)}</span>
                 <span>•</span>
                 <span>
@@ -226,17 +234,29 @@ function SeriesDetail() {
                 </span>
                 <span>•</span>
                 <span>{seriesData.original_language.toUpperCase()}</span>
-              </div> */}
+              </div>
 
               {/* Overview */}
-              <div className="mb-6 mt-14">
-                <h2 className="text-2xl font-bold mb-4 text-text-primary lg:mt-10">
-                  Overview
-                </h2>
-                <p className="text-text-secondary-200 leading-relaxed text-lg">
-                  {seriesData.overview}
-                </p>
-              </div>
+
+              {seriesData.tagline.length > 0 ? (
+                <div className="mb-6 md:mt-12 lg:mt-10">
+                  <h2 className="text-2xl font-bold mb-4 text-text-primary lg:mt-10">
+                    Overview
+                  </h2>
+                  <p className="text-text-secondary-200 leading-relaxed text-lg">
+                    {seriesData.overview}
+                  </p>
+                </div>
+              ) : (
+                <div className="mb-6 md:mt-20 lg:mt-14">
+                  <h2 className="text-2xl font-bold mb-4 text-text-primary lg:mt-10">
+                    Overview
+                  </h2>
+                  <p className="text-text-secondary-200 leading-relaxed text-lg">
+                    {seriesData.overview}
+                  </p>
+                </div>
+              )}
 
               {/* User Score and Basic Stats */}
               <div className="flex flex-wrap gap-4 mb-6">
@@ -273,7 +293,7 @@ function SeriesDetail() {
                   {seriesData.genres.map((genre) => (
                     <span
                       key={genre.id}
-                      className="bg-muted bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-text-primary font-medium hover:bg-opacity-30 transition-all"
+                      className="bg-bg-secondary bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-text-primary font-medium hover:bg-opacity-30 transition-all"
                     >
                       {genre.name}
                     </span>
