@@ -121,7 +121,7 @@ function SearchBar() {
           type="text"
           value={input}
           placeholder="search..."
-          className="w-full pl-10 pr-4 py-2 rounded-full bg-bg-tertiary text-text-primary
+          className="w-full pl-10 pr-4 py-2 sm:h-8 h-7 rounded-full bg-bg-tertiary text-text-primary
                    border border-none focus:border-none outline-none"
         />
 
@@ -158,7 +158,14 @@ function SearchBar() {
                 {movies.map((ele) => (
                   <div
                     key={ele.id}
+                    tabIndex={0}
                     onClick={() => handleMovieClick(ele)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault(); // Prevent scrolling on Space
+                        handleMovieClick(ele); // Open the movie
+                      }
+                    }}
                     className="flex items-center p-2 hover:bg-bg-tertiary cursor-pointer rounded-md"
                   >
                     <img
@@ -189,7 +196,14 @@ function SearchBar() {
                 {series.map((ele) => (
                   <div
                     key={ele.id}
+                    tabIndex={0}
                     onClick={() => handleSeriesClick(ele)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault(); // Prevent scrolling on Space
+                        handleSeriesClick(ele); // Open the movie
+                      }
+                    }}
                     className="flex items-center p-2 hover:bg-bg-tertiary cursor-pointer rounded-md"
                   >
                     <img
@@ -220,7 +234,14 @@ function SearchBar() {
                 {persons.map((ele) => (
                   <div
                     key={ele.id}
+                    tabIndex={0}
                     onClick={() => handlePerson(ele)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault(); // Prevent scrolling on Space
+                        handlePerson(ele); // Open the movie
+                      }
+                    }}
                     className="flex items-center p-2 hover:bg-bg-tertiary cursor-pointer rounded-md"
                   >
                     <img

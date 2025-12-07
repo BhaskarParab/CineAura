@@ -45,7 +45,7 @@ function About() {
               y: 0,
               // duration: 0.5,
               ease: "expo.out",
-              stagger: 0.03,
+              stagger: 0.05,
               delay: 0.8,
             }
           );
@@ -92,9 +92,9 @@ function About() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <div className="px-6 py-16 mt-5 flex flex-col gap-16">
-        <div className="text-5xl justify-items-center">
+        <div className="text-5xl -mt-26 sm:mt-0 sm justify-items-center">
           {}
           <h1 id="hi" className="text-text-amber mt-30 mr-67 split-hidden">
             hi,
@@ -111,15 +111,17 @@ function About() {
             <h1 className="text-text-secondary text-xl w-80 sm:text-3xl sm:w-120 leading-relaxed">
               <Quote
                 size={30}
-                className="scale-x-[-1] opacity-40 -ml-9 -mb-5"
+                className="scale-x-[-1] opacity-40 -ml-12 sm:-ml-9 -mb-5"
               />
+              <div className="-ml-4 sm:ml-0">
               As a movie and webseries lover, before I watch anything I look for
               people's reviews and ratings, so I have to surf through multiple
               sites. I find that a waste of my time — that's when CineAura comes
               in...
+              </div>
               <Quote
                 size={30}
-                className="opacity-40 ml-73 -mt-10 sm:ml-110 sm:-mt-12"
+                className="opacity-40 ml-55 -mt-10 sm:ml-110 sm:-mt-12"
               />
             </h1>
           </div>

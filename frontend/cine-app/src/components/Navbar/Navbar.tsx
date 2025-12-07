@@ -23,7 +23,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-4 sm:px-6 py-3 bg-bg-primary/95 backdrop-blur-sm text-text-primary z-50 shadow-sm">
+      <nav className="fixed top-0 left-0 w-full flex h-12 sm:h-14 items-center justify-between px-4 sm:px-6 py-3 bg-bg-primary/95 backdrop-blur-sm text-text-primary z-50 shadow-xs">
         {/* LEFT - Logo */}
         <div onClick={() => navigate("/")} className="flex items-center">
           <img
@@ -37,19 +37,19 @@ function Navbar() {
         <div className="hidden md:flex flex-1 justify-center gap-8 lg:gap-10">
           <a
             onClick={() => navigate("/")}
-            className="cursor-pointer text-base sm:text-lg font-medium hover:opacity-70 transition"
+            className="cursor-pointer text-base sm:text-lg font-medium hover:opacity-80 "
           >
             Home
           </a>
           <a
             onClick={() => navigate("/About")}
-            className="cursor-pointer text-base sm:text-lg font-medium hover:opacity-70 transition"
+            className="cursor-pointer text-base sm:text-lg font-medium hover:opacity-80"
           >
             About
           </a>
           <a
             onClick={() => navigate("/results")}
-            className="cursor-pointer text-base sm:text-lg font-medium hover:opacity-70 transition"
+            className="cursor-pointer text-base sm:text-lg font-medium hover:opacity-80"
           >
             Explore
           </a>
@@ -70,7 +70,7 @@ function Navbar() {
       </div>
 
         {/* RIGHT - Controls (Desktop) */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 transition-none">
           <DarkToggle />
         </div>
 
@@ -82,17 +82,17 @@ function Navbar() {
             aria-label="Toggle menu"
           >
             <span
-              className={`bg-text-primary block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
+              className={`bg-text-primary block duration-200 transition-transform ease-out h-0.5 w-6 rounded-sm ${
                 isMenuOpen ? "rotate-45 translate-y-1" : "-translate-y-0.5"
               }`}
             ></span>
             <span
-              className={`bg-text-primary block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm my-0.5 ${
+              className={`bg-text-primary block duration-200 transition-transform ease-out h-0.5 w-6 rounded-sm my-0.5 ${
                 isMenuOpen ? "opacity-0" : "opacity-100"
               }`}
             ></span>
             <span
-              className={`bg-text-primary block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
+              className={`bg-text-primary block duration-200 transition-transform ease-out h-0.5 w-6 rounded-sm ${
                 isMenuOpen ? "-rotate-45 -translate-y-1" : "translate-y-0.5"
               }`}
             ></span>
@@ -102,34 +102,33 @@ function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed top-0 left-0 w-full h-full bg-bg-primary/95 backdrop-blur-sm z-40 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 w-full h-full bg-bg-primary/95 backdrop-blur-sm z-40 duration-200 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         } md:hidden`}
       >
-        <div className="flex flex-col h-full pt-20 px-6">
+        <div className="flex flex-col h-full pt-12 px-6">
           <div className="flex flex-col space-y-6 text-xl">
             <a
               onClick={() => handleNavigation("/")}
-              className="cursor-pointer font-medium mt-5 hover:opacity-70 transition py-2"
+              className="cursor-pointer font-medium mt-5 hover:opacity-70 py-2"
             >
               Home
             </a>
             <a
               onClick={() => handleNavigation("/about")}
-              className="cursor-pointer font-medium hover:opacity-70 transition py-2"
+              className="cursor-pointer font-medium hover:opacity-70 py-2"
             >
               About
             </a>
             <a
-              href="#movies"
-              onClick={() => setIsMenuOpen(false)}
-              className="font-medium hover:opacity-70 transition py-2"
+              onClick={() => handleNavigation("/results")}
+              className="cursor-pointer font-medium hover:opacity-70 py-2"
             >
-              Movies
+              Explore
             </a>
           </div>
 
-          <div className="mt-auto flex justify-start pb-8">
+          <div className="mt-auto flex justify-start pb-8 transition-none">
             <DarkToggle />
           </div>
         </div>
