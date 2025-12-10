@@ -5,6 +5,7 @@ import { storeSearch } from "../../Redux/SearchDataStoreSlice/SearchDataStoreSli
 import { useNavigate } from "react-router-dom";
 import type {
   PersonResult,
+  SearchItem,
   SearchMovie,
   SearchSeries,
 } from "../../types/SearchType";
@@ -40,8 +41,10 @@ function SearchBar() {
           return res.json();
         })
         .then((data) => {
-          const limit = data.results;
-          dispatch(storeSearch(limit));
+          const sortedResults = data.results.sort(
+          (a: SearchItem, b: SearchItem) => (b.popularity ?? 0) - (a.popularity ?? 0)
+        );
+          dispatch(storeSearch(sortedResults));
         })
         .then((err) => {
           console.log(err);

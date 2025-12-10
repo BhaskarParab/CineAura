@@ -12,6 +12,7 @@ import {
   storeSeries,
   type SeriesDataType,
 } from "../../Redux/SeriesSlice/PopularSeriesSlice";
+import HomeTop from "../HomeTop/HomeTop";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w1280";
 
@@ -41,7 +42,7 @@ function Home() {
         if (!res.ok) throw new Error("Failed to fetch movies");
 
         const data = await res.json();
-        dispatch(storeData(data.results.slice(0, 10)));
+        dispatch(storeData(data.results));
       } catch (error) {
         console.error("Error fetching movies:", error);
       } finally {
@@ -76,35 +77,33 @@ function Home() {
     getTopSeries();
   }, []);
 
-  const filteredWebSeries = fetchedSeriesData.filter(
-    (item) => !item.genre_ids.includes(16)
-  );
-
-  const seriesList = filteredWebSeries.slice(0, 10);
-
   // console.log(seriesList)
 
   const goToPrevious = () => {
     if (fetchedData.length === 0) return;
-    setCurrentIndex((prev) => (prev === 0 ? fetchedData.length - 1 : prev - 1));
+    setCurrentIndex((prev) =>
+      prev === 0 ? Math.floor(fetchedData.length / 5) - 1 : prev - 1
+    );
   };
 
   const goToNext = () => {
     if (fetchedData.length === 0) return;
-    setCurrentIndex((prev) => (prev === fetchedData.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) =>
+      prev === Math.floor(fetchedData.length / 5) - 1 ? 0 : prev + 1
+    );
   };
 
   const goToPreviousSeries = () => {
-    if (seriesList.length === 0) return;
+    if (fetchedSeriesData.length === 0) return;
     setCurrentSeriesIndex((prev) =>
-      prev === 0 ? seriesList.length - 1 : prev - 1
+      prev === 0 ? Math.ceil(fetchedSeriesData.length / 5) - 1 : prev - 1
     );
   };
 
   const goToNextSeries = () => {
-    if (seriesList.length === 0) return;
+    if (fetchedSeriesData.length === 0) return;
     setCurrentSeriesIndex((prev) =>
-      prev === seriesList.length - 1 ? 0 : prev + 1
+      prev === Math.ceil(fetchedSeriesData.length / 5) - 1 ? 0 : prev + 1
     );
   };
 
@@ -118,241 +117,149 @@ function Home() {
     navigate(`/webseries/${series.id}/${slug}`);
   };
 
-  const limitText = (text: string, limit = 160) => {
-    if (text.length <= limit) return text;
-
-    return text.slice(0, limit) + "...";
-  };
-
   return (
     <>
-      <div className="relative w-full mt-25 overflow-hidden flex justify-center">
-        {/* Slider container */}
-        <div
-          className="
-        relative overflow-hidden rounded-xl
-
-        w-[400px] h-[240px]
-
-        sm:w-[370px] sm:h-[460px]
-        md:w-[460px] md:h-[360px]
-        lg:w-[700px] lg:h-[350px]
-        xl:w-[950px] xl:h-[500px]
-      "
-        >
-          <h1 className="text-2xl md:text-4xl font-bold">Top Movies</h1>
-          <div
-            className="shadow-xl flex h-full transition-transform duration-500 mt-2 ease-in-out"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          >
-            {fetchedData.map((movie) => (
-              <div
-                key={movie.id}
-                className="
-              shrink-0 h-full relative
-
-              /* Each slide width always equals container width */
-              w-full
-              sm:w-[370px]
-              md:w-[460px]
-              lg:w-[700px]
-              xl:w-[950px]
-            "
+    <HomeTop/>
+      {/* Top Movies */}
+      <div className="relative w-full mt-5 lg:mt-0 overflow-hidden flex justify-center p-2">
+        <div className="relative overflow-hidden w-full max-w-7xl">
+          <div className="flex items-center justify-between mb-2 lg:mb-6">
+            <h1 className="text-lg md:text-2xl lg:text-4xl ml-2 font-bold">Top Movies</h1>
+            {/* MOBILE NAVIGATION (below slider) */}
+            <div className="flex lg:hidden gap-2">
+              <button
+                onClick={goToPrevious}
+                className="text-text-primary cursor-pointer p-3 rounded-full"
               >
-                <img
-                  src={`${IMAGE_BASE_URL}${movie.backdrop_path}`}
-                  alt={movie.title}
-                  className="
-                w-full h-full
-                object-cover        /* mobile perfect fit */
-                md:object-cover   /* larger screens fill nicely */
-                object-center
-                rounded-xl
-              "
-                />
+                <ChevronLeft />
+              </button>
 
-                <div className="absolute mb-1 bottom-0 left-0 p-3 bg-gradient-to-t from-black via-black/40 to-transparent md:p-4 text-white rounded-none w-full">
-                  <h1 className="text-l md:text-4xl font-bold">
-                    {movie.title}
-                  </h1>
-                  <p className="text-xs mb-14 md:text-base max-w-xl">
-                    {limitText(movie.overview, 180)}
+              <button
+                onClick={goToNext}
+                className="text-text-primary p-3 cursor-pointer rounded-full"
+              >
+                <ChevronRight />
+              </button>
+            </div>
+          </div>
 
-                    {movie.overview.length > 180 && (
-                      <span
-                        onClick={() => handleMovieClick(movie)}
-                        className="ml-1 underline cursor-pointer text-blue-300 hover:text-blue-400"
-                      >
-                        See more
-                      </span>
-                    )}
-                  </p>
-                </div>
-                <button
+          <div className="relative">
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {fetchedData.map((movie) => (
+                <div
+                  key={movie.id}
                   onClick={() => handleMovieClick(movie)}
                   className="
-    absolute top-4 right-4 
-    bg-bg-secondary hover:bg-bg-primary
-    text-text-primary px-4 py-2 rounded-full text-sm md:text-base
-     cursor-pointer
-  "
+                  px-2 shrink-0
+                  w-1/5  
+                "
                 >
-                  Details
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {/* Buttons */}
-
-          {/* Indicators */}
-          <div className="absolute -mb-2 bottom-4 left-1/2 -translate-x-1/2 flex gap-3 z-20">
-            {fetchedData.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-3 h-3 cursor-pointer rounded-full duration-300
-              ${currentIndex === index ? "bg-white scale-125" : "bg-white/40"}
-            `}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="">
-        <div className="justify-self-center ">
-          <button
-            onClick={goToPrevious}
-            className="m-3 cursor-pointer bg-bg-secondary hover:bg-muted/60 text-text-primary p-3 rounded-full"
-          >
-            <ChevronLeft />
-          </button>
-
-          <button
-            onClick={goToNext}
-            className="cursor-pointer bg-bg-secondary hover:bg-muted/60 text-text-primary p-3 rounded-full"
-          >
-            <ChevronRight />
-          </button>
-        </div>
-      </div>
-
-      {/* TOP SERIES */}
-
-      <div className="relative w-full mt-25 overflow-hidden flex justify-center">
-        {/* Slider container */}
-        <div
-          className="
-        relative overflow-hidden rounded-xl
-
-        w-[400px] h-[240px]
-
-        sm:w-[370px] sm:h-[460px]
-        md:w-[460px] md:h-[360px]
-        lg:w-[700px] lg:h-[350px]
-        xl:w-[950px] xl:h-[500px]
-      "
-        >
-          <h1 className="text-2xl md:text-4xl font-bold">Top Series</h1>
-          <div
-            className="shadow-xl flex h-full transition-transform duration-500 mt-2 ease-in-out"
-            style={{ transform: `translateX(-${currentSeriesIndex * 100}%)` }}
-          >
-            {seriesList.map((series) => (
-              <div
-                key={series.id}
-                className="
-              shrink-0 h-full relative
-
-              /* Each slide width always equals container width */
-              w-full
-              sm:w-[370px]
-              md:w-[460px]
-              lg:w-[700px]
-              xl:w-[950px]
-            "
-              >
-                <img
-                  src={`${IMAGE_BASE_URL}${series.backdrop_path}`}
-                  alt={series.name}
-                  className="
-                w-full h-full
-                object-cover        /* mobile perfect fit */
-                md:object-cover   /* larger screens fill nicely */
-                object-center
-                rounded-xl
-              "
-                />
-
-                <div className="absolute mb-1 bottom-0 left-0 p-3 bg-gradient-to-t from-black via-black/40 to-transparent md:p-4 text-white rounded-none w-full">
-                  <h1 className="text-l md:text-4xl font-bold">
-                    {series.name}
-                  </h1>
-                  <p className="text-xs mb-14 md:text-base max-w-xl">
-                    {limitText(series.overview, 180)}
-
-                    {series.overview.length > 180 && (
-                      <span
-                        onClick={() => handleSeriesClick(series)}
-                        className="ml-1 underline cursor-pointer text-blue-300 hover:text-blue-400"
-                      >
-                        See more
-                      </span>
-                    )}
-                  </p>
+                  <div className="relative cursor-pointer overflow-hidden shadow-lg">
+                    <img
+                      src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                      alt={movie.title}
+                      className="w-full h-full object-contain"
+                    />
+                    {/* <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-black via-black/70 to-transparent text-white">
+                      <h3 className="text-lg md:text-lg font-bold truncate">
+                        {movie.title}
+                      </h3>
+                    </div> */}
+                  </div>
                 </div>
+              ))}
+              </div>
+
+              {/* Navigation */}
+              <div className="absolute h-full right-0 top-1/2 transform translate-x-1/3 -translate-y-1/2 lg:-translate-y-1/2 lg:translate-x-0 bg-linear-to-l from-black to-transperent via-black/80 lg:from-black lg:via-black/65 via-40% flex-col items-center justify-center gap-1 lg:gap-2 lg:p-1 transition-all duration-300 ease-out hover:from-black lg:opacity-0 lg:hover:opacity-100 lg:flex hidden">
                 <button
-                  onClick={() => handleSeriesClick(series)}
-                  className="
-    absolute top-4 right-4 
-    bg-bg-secondary hover:bg-bg-primary
-    text-text-primary px-4 py-2 rounded-full text-sm md:text-base
-     cursor-pointer
-  "
+                  onClick={goToPrevious}
+                  className="text-white p-2 cursor-pointer rounded-full"
                 >
-                  Details
+                  <ChevronLeft />
+                </button>
+                <div className="w-6 h-px" />
+                <button
+                  onClick={goToNext}
+                  className="text-white p-2 cursor-pointer rounded-full"
+                >
+                  <ChevronRight />
                 </button>
               </div>
-            ))}
+            </div>
           </div>
+        </div>
 
-          {/* Buttons */}
+      {/* Top Series */}
+      <div className="relative w-full lg:mt-25 overflow-hidden flex justify-center p-2">
+        <div className="relative overflow-hidden w-full max-w-7xl">
+          <div className="flex items-center justify-between mb-2 lg:mb-6">
+            <h1 className="text-lg md:text-2xl lg:text-4xl font-bold ml-2">Top Series</h1>
 
-          {/* Indicators */}
-          <div className="absolute -mb-2 bottom-4 left-1/2 -translate-x-1/2 flex gap-3 z-20">
-            {seriesList.map((_, Idx) => (
+            {/* MOBILE NAVIGATION (same as movies) */}
+            <div className="flex lg:hidden gap-2">
               <button
-                key={Idx}
-                onClick={() => setCurrentSeriesIndex(Idx)}
-                className={`w-3 h-3 cursor-pointer rounded-full duration-300
-              ${
-                currentSeriesIndex === Idx
-                  ? "bg-white scale-125"
-                  : "bg-white/40"
-              }
-            `}
-              />
-            ))}
+                onClick={goToPreviousSeries}
+                className="text-text-primary cursor-pointer p-3 rounded-full"
+              >
+                <ChevronLeft />
+              </button>
+
+              <button
+                onClick={goToNextSeries}
+                className="text-text-primary p-3 cursor-pointer rounded-full"
+              >
+                <ChevronRight />
+              </button>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentSeriesIndex * 100}%)` }}
+            >
+              {fetchedSeriesData.map((series) => (
+                <div
+                  key={series.id}
+                  onClick={() => handleSeriesClick(series)}
+                  className="px-2 shrink-0 w-1/5"
+                >
+                  <div className="relative cursor-pointer overflow-hidden shadow-lg">
+                    <img
+                      src={`${IMAGE_BASE_URL}${series.poster_path}`}
+                      alt={series.name}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+              ))}
+              </div>
+
+              {/* DESKTOP/TABLET NAVIGATION (same as movies) */}
+              <div className="absolute h-full right-0 top-1/2 transform translate-x-1/3 -translate-y-1/2 lg:-translate-y-1/2 lg:translate-x-0 bg-linear-to-l from-black to-transperent via-black/80 lg:from-black lg:via-black/65 via-40% flex-col items-center justify-center gap-1 lg:gap-2 lg:p-1 transition-all duration-300 ease-out hover:from-black lg:opacity-0 lg:hover:opacity-100 lg:flex hidden">
+                <button
+                  onClick={goToPreviousSeries}
+                  className="text-white p-2 cursor-pointer rounded-full"
+                >
+                  <ChevronLeft />
+                </button>
+
+                <div className="w-6 h-px" />
+
+                <button
+                  onClick={goToNextSeries}
+                  className="text-white p-2 cursor-pointer rounded-full"
+                >
+                  <ChevronRight />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="">
-        <div className="justify-self-center ">
-          <button
-            onClick={goToPreviousSeries}
-            className="m-3 cursor-pointer bg-bg-secondary hover:bg-muted/60 text-text-primary p-3 rounded-full"
-          >
-            <ChevronLeft />
-          </button>
-
-          <button
-            onClick={goToNextSeries}
-            className="cursor-pointer bg-bg-secondary hover:bg-muted/60 text-text-primary p-3 rounded-full"
-          >
-            <ChevronRight />
-          </button>
-        </div>
-      </div>
     </>
   );
 }

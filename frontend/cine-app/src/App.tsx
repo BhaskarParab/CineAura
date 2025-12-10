@@ -15,9 +15,9 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
+      <div className="flex flex-col bg-bg-primary text-text-primary">
         <Navbar />
-        <main className="flex-auto">
+        <main className="flex-auto overflow-y-auto hide-scrollbar">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/movie/:id/:slug" element={<MovieDetail />} />
