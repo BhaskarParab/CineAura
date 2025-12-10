@@ -11,6 +11,7 @@ export interface SearchMovie {
   adult?: boolean;
   backdrop_path?: string | null;
   genre_ids?: number[];
+  popularity?: number | null;
 }
 
 // Minimal Series type for search results
@@ -26,6 +27,7 @@ export interface SearchSeries {
   adult?: boolean;
   backdrop_path?: string | null;
   genre_ids?: number[];
+  popularity?: number | null;
 }
 
 // Person type
@@ -38,10 +40,12 @@ export interface PersonResult {
   adult?: boolean;
 
   // Person does NOT have fixed movie fields but your component reads them
+  backdrop_path?: string | null;
   release_date?: string;
   first_air_date?: string;
   vote_average?: number;
   genre_ids?: number[];
+  popularity?: number | null;
 
   known_for?: Array<SearchMovie | SearchSeries>;
 }

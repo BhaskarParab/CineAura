@@ -127,7 +127,7 @@ function MovieDetail() {
   const topReviews = getTopReviews();
 
   return (
-    <div className="bg-bg-primary text-text-primary mt-16 min-h-screen">
+    <div className="bg-bg-primary text-text-primary mt-12 sm:mt-14 min-h-screen">
       {/* Hero Section with Backdrop */}
       <div className="relative">
         {/* Backdrop Image Container */}

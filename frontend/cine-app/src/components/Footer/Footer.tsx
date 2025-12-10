@@ -13,9 +13,13 @@ function Footer() {
 
   return (
     <footer className="w-full mt-35 bg-bg-primary text-text-primary border-t border-gray-600/20 px-6 py-10">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-10">
+      <div
+        className="max-w-7xl mx-auto 
+                  grid grid-cols-1 gap-10 
+                  lg:flex lg:flex-row lg:justify-between lg:items-start"
+      >
         {/* COLUMN 1 — Logo + Description */}
-        <div>
+        <div className="lg:w-40">
           <img
             onClick={() => navigate("/")}
             src={isDark === "dark" ? darkLogo : logo}
@@ -23,13 +27,13 @@ function Footer() {
             className="cursor-pointer w-12 h-12 object-contain mb-3"
           />
           <p className="text-sm opacity-70 leading-relaxed">
-            CineAura brings you curated details of movies and web series —
+            CineAura brings you curated details of movies and web series,
             discover cast, ratings, trailers, and more in one clean experience.
           </p>
         </div>
 
         {/* COLUMN 2 — Useful Links */}
-        <div>
+        <div className="">
           <h3 className="font-semibold mb-3 text-base">Useful Links</h3>
           <ul className="space-y-2 text-sm">
             <li>
@@ -41,19 +45,28 @@ function Footer() {
               </button>
             </li>
             <li>
-              <a className="opacity-80 hover:opacity-100 cursor-pointer">Privacy Policy</a>
+              <a className="opacity-80 hover:opacity-100 cursor-pointer">
+                Privacy Policy
+              </a>
             </li>
             <li>
-              <a className="opacity-80 hover:opacity-100 cursor-pointer">Terms of Service</a>
+              <a className="opacity-80 hover:opacity-100 cursor-pointer">
+                Terms of Service
+              </a>
             </li>
             <li>
-              <a href="mailto:bhaskarrparab@gmail.com" className="opacity-80 hover:opacity-100 cursor-pointer">Contact</a>
+              <a
+                href="mailto:bhaskarrparab@gmail.com"
+                className="opacity-80 hover:opacity-100 cursor-pointer"
+              >
+                Contact
+              </a>
             </li>
           </ul>
         </div>
 
         {/* COLUMN 3 — Social Media */}
-        <div>
+        <div className="">
           <h3 className="font-semibold mb-3 text-base">Connect with me</h3>
           <div className="flex gap-4 text-xl">
             <a href="https://x.com/BhaskarParab7" target="_blank">
