@@ -108,7 +108,7 @@ function HomeTop() {
               />
 
               {/* TITLE */}
-              <h2 onClick={() => handleOnClickNavigation(ele)} className="absolute cursor-pointer bottom-2 left-4 text-white hover:text-white/90 hover:scale-[1.010] max-w-[70%] truncate xs-430:text-2xl sm:text-2xl lg:text-5xl sm:bottom-1/4 font-semibold drop-shadow-lg ">
+              <h2 onClick={() => handleOnClickNavigation(ele)} className="absolute cursor-pointer bottom-2 left-4 text-white hover:text-white/90 hover:scale-[1.010] max-w-[70%] lg:h-15 truncate xs-430:text-2xl sm:text-2xl lg:text-5xl sm:bottom-1/4 font-semibold drop-shadow-lg ">
                 {ele.media_type === "movie" ? ele.title : ele.name}
               </h2>
             </div> 
