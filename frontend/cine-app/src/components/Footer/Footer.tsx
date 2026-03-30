@@ -12,9 +12,9 @@ function Footer() {
   const navigate = useNavigate();
 
   return (
-    <footer className="w-full mt-35 bg-bg-primary text-text-primary border-t border-gray-600/20 px-6 py-10">
+    <footer className="w-full mt-35 bg-bg-primary text-text-primary border-t border-gray-600/20 px-6 py-4">
       <div
-        className="max-w-7xl mx-auto 
+        className="max-full mx-auto 
                   grid grid-cols-1 gap-10 
                   lg:flex lg:flex-row lg:justify-between lg:items-start"
       >
