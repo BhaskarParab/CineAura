@@ -100,7 +100,7 @@ function About() {
             hi,
           </h1>
 
-          <p id="mid" className="text-text-primary w-80 split-hidden">
+          <p id="mid" className="text-text-primary w-82 split-hidden">
             I created this site for people to search or view the information
             about entertainment media. Its also a learning project
           </p>
