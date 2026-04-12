@@ -17,8 +17,8 @@
 
     // Other Outputs
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "declarationMap": false,
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
@@ -42,7 +42,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
-    "moduleResolution": "Node"
+    "moduleResolution": "node"
   },
   "include": ["src/**/*", "src/types/**/*.d.ts"]
 }
