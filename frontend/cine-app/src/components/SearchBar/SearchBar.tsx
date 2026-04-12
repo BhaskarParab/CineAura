@@ -85,7 +85,7 @@ function SearchBar() {
 
   const handleSeriesClick = (series: SearchSeries) => {
     const slug = series.name.toLowerCase().replace(/\s+/g, "-");
-    navigate(`/webseries/${series.id}/${slug}`);
+    navigate(`/tv/${series.id}/${slug}`);
     setInput("");
     dispatch(storeSearch([]));
   };

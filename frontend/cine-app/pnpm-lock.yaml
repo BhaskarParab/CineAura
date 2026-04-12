@@ -11,6 +11,9 @@ importers:
       '@gsap/react':
         specifier: ^2.1.2
         version: 2.1.2(gsap@3.13.0)(react@19.2.3)
+      '@react-oauth/google':
+        specifier: ^0.13.4
+        version: 0.13.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@reduxjs/toolkit':
         specifier: ^2.10.1
         version: 2.10.1(react-redux@9.2.0(@types/react@19.2.5)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
@@ -498,6 +501,12 @@ packages:
   '@parcel/watcher@2.5.1':
     resolution: {integrity: sha512-dfUnCxiN9H4ap84DvD2ubjw+3vUNpstxa0TneY/Paat8a3R4uQZDLSvWjmznAY/DoahqTHl9V46HF/Zs3F29pg==}
     engines: {node: '>= 10.0.0'}
+
+  '@react-oauth/google@0.13.4':
+    resolution: {integrity: sha512-hGKyNEH+/PK8M0sFEuo3MAEk0txtHpgs94tDQit+s2LXg7b6z53NtzHfqDvoB2X8O6lGB+FRg80hY//X6hfD+w==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   '@reduxjs/toolkit@2.10.1':
     resolution: {integrity: sha512-/U17EXQ9Do9Yx4DlNGU6eVNfZvFJfYpUtRRdLf19PbPjdWBxNlxGZXywQZ1p1Nz8nMkWplTI7iD/23m07nolDA==}
@@ -1942,6 +1951,11 @@ snapshots:
       '@parcel/watcher-win32-ia32': 2.5.1
       '@parcel/watcher-win32-x64': 2.5.1
     optional: true
+
+  '@react-oauth/google@0.13.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+    dependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
 
   '@reduxjs/toolkit@2.10.1(react-redux@9.2.0(@types/react@19.2.5)(react@19.2.3)(redux@5.0.1))(react@19.2.3)':
     dependencies:

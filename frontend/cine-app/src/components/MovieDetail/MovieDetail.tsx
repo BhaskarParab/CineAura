@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import type { MovieDetailType, CrewMember } from "../../types/MovieDetail";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import type {
+  MovieDetailType,
+  CrewMember,
+  Review,
+} from "../../types/MovieDetail";
 import { useDispatch } from "react-redux";
 import { hideLoader, showLoader } from "../../Redux/LoaderSlice/LoaderSlice";
+import ReviewPage from "../Review Page/ReviewPage";
 
 interface PersonType {
   id: number;
@@ -13,16 +18,31 @@ function MovieDetail() {
   const apiKey = import.meta.env.VITE_API_KEY;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  const mediaType = location.pathname.startsWith("/tv") ? "TV" : "MOVIE";
 
   // Get movie ID from URL parameters
   const { id } = useParams<{ id: string }>();
 
   const [movieData, setMovieData] = useState<MovieDetailType | null>(null);
+  const [topReviews, setTopReviews] = useState<Review[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [expandedReviews, setExpandedReviews] = useState<
     Record<string, boolean>
   >({});
   // Add state for showing all cast
   const [showAllCast, setShowAllCast] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [visibleCount, setVisibleCount] = useState(10);
+
+  const allReviews = [
+    ...(reviews || []).map((r) => ({ ...r, type: "db" })),
+    ...(topReviews || []).map((r) => ({ ...r, type: "tmdb" })),
+  ];
+
+  const visibleReviews = allReviews.slice(0, visibleCount);
 
   useEffect(() => {
     if (!id) return;
@@ -31,7 +51,7 @@ function MovieDetail() {
       dispatch(showLoader());
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&append_to_response=videos,credits,reviews`
+          `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&append_to_response=videos,credits,reviews`,
         );
         const data = await res.json();
         setMovieData(data);
@@ -43,7 +63,80 @@ function MovieDetail() {
     }
 
     fetchMovieData();
-  }, [apiKey, id, dispatch]);
+  }, [id]);
+
+  useEffect(() => {
+    async function fetchMovieReview() {
+      try {
+        const res = await fetch(
+          `http://localhost:5001/api/reviews/${mediaType}/${id}`,
+          {
+            method: "GET",
+          },
+        );
+
+        const data = await res.json();
+
+        setReviews(data);
+
+        if (!res.ok) {
+          throw new Error(data.message || "Something went wrong");
+        }
+
+        console.log("Review added!");
+      } catch (err: unknown) {
+        console.error(err);
+
+        if (err instanceof Error) {
+          console.log(err.message);
+        } else {
+          console.log("Something went wrong");
+        }
+      }
+    }
+
+    fetchMovieReview();
+  }, [id, mediaType]);
+
+  const getTopReviews = async (pageNumber: number = 1) => {
+    if (!id) return;
+
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/movie/${id}/reviews?api_key=${apiKey}&page=${pageNumber}`,
+      );
+
+      const data = await res.json();
+
+      if (pageNumber === 1) {
+        // first load
+        setTopReviews(data.results);
+      } else {
+        // append more
+        setTopReviews((prev) => [...prev, ...data.results]);
+      }
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!id) return;
+
+    setPage(1);
+    setHasMore(true);
+    getTopReviews(1);
+  }, [id]);
+
+  useEffect(() => {
+    if (!hasMore) return;
+
+    if (visibleCount > allReviews.length - 5) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      getTopReviews(nextPage);
+    }
+  }, [visibleCount]);
 
   // Format date to readable format
   const formatDate = (dateString: string) => {
@@ -68,7 +161,7 @@ function MovieDetail() {
     if (!movieData?.videos?.results) return null;
     return (
       movieData.videos.results.find(
-        (video) => video.type === "Trailer" && video.official === true
+        (video) => video.type === "Trailer" && video.official === true,
       ) || movieData.videos.results.find((video) => video.type === "Trailer")
     );
   };
@@ -85,14 +178,8 @@ function MovieDetail() {
   const getDirectors = () => {
     if (!movieData?.credits?.crew) return [];
     return movieData.credits.crew.filter(
-      (person: CrewMember) => person.job === "Director"
+      (person: CrewMember) => person.job === "Director",
     );
-  };
-
-  // Get top reviews
-  const getTopReviews = () => {
-    if (!movieData?.reviews?.results) return [];
-    return movieData.reviews.results.slice(0, 3);
   };
 
   // Toggle review expansion
@@ -124,7 +211,7 @@ function MovieDetail() {
   const trailer = findTrailer();
   const cast = getCast(); // Changed from getTopCast to getCast
   const directors = getDirectors();
-  const topReviews = getTopReviews();
+  // const topReviews = getTopReviews();
 
   return (
     <div className="bg-bg-primary text-text-primary mt-12 sm:mt-14 min-h-screen">
@@ -420,58 +507,111 @@ function MovieDetail() {
               </div>
             )}
 
-            {/* Reviews */}
-            {topReviews.length > 0 && (
+            <ReviewPage
+              movieId={movieData.id}
+              mediaType={mediaType}
+              setReviews={setReviews}
+            />
+
+            {visibleReviews.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4 text-text-primary">
+                <h2 className="text-2xl font-bold mb-6 text-text-primary">
                   Reviews
                 </h2>
+
                 <div className="space-y-4">
-                  {topReviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="bg-card rounded-xl p-6 shadow-md border border-border"
-                    >
-                      <div className="flex items-center mb-3">
-                        <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center mr-3">
-                          <span className="text-white font-bold">
-                            {review.author.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                        <h3 className="font-semibold text-text-primary">
-                          {review.author}
-                        </h3>
-                        {review.author_details.rating && (
-                          <div className="flex items-center ml-auto bg-yellow-100 dark:bg-yellow-900 px-2 py-1 rounded">
-                            <span className="text-yellow-600 dark:text-yellow-400 mr-1">
-                              ★
-                            </span>
-                            <span className="text-yellow-600 dark:text-yellow-400 font-medium">
-                              {review.author_details.rating}/10
-                            </span>
+                  {visibleReviews.map((review) => {
+                    const isDB = review.type === "db";
+                    const reviewId = String(isDB ? review.id : review.id_);
+                    const avatarPath = isDB
+                      ? review.user.avatar
+                      : review.author_details?.avatar_path;
+
+                    const avatarUrl =
+                      !isDB && avatarPath
+                        ? avatarPath.startsWith("/http")
+                          ? avatarPath.slice(1)
+                          : `https://image.tmdb.org/t/p/w200${avatarPath}`
+                        : avatarPath;
+
+                    return (
+                      <div
+                        key={isDB ? review.id : review.id_}
+                        className="bg-card rounded-xl p-6 shadow-md border border-border"
+                      >
+                        {/* Header */}
+                        <div className="flex items-center mb-3">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-accent flex items-center justify-center mr-3">
+                            {avatarUrl ? (
+                              <img
+                                src={avatarUrl}
+                                alt="avatar"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-white font-bold">
+                                {(isDB ? review.user.username : review.author)
+                                  ?.charAt(0)
+                                  ?.toUpperCase() || "U"}
+                              </span>
+                            )}
                           </div>
+
+                          <h3 className="font-semibold text-text-primary">
+                            {isDB ? review.user.username : review.author}
+                          </h3>
+
+                          {(isDB
+                            ? review.rating
+                            : review.author_details.rating) && (
+                            <div className="flex items-center ml-auto bg-yellow-100 dark:bg-yellow-900 px-2 py-1 rounded">
+                              <span className="text-yellow-600 dark:text-yellow-400 mr-1">
+                                ★
+                              </span>
+                              <span className="text-yellow-600 dark:text-yellow-400 font-medium">
+                                {isDB
+                                  ? review.rating
+                                  : review.author_details.rating}
+                                /10
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        <p className="text-text-secondary leading-relaxed">
+                          {review.content &&
+                          review.content.length > 300 &&
+                          !expandedReviews[reviewId]
+                            ? `${review.content.substring(0, 300)}...`
+                            : review.content}
+                        </p>
+
+                        {/* Read More */}
+                        {review.content && review.content.length > 300 && (
+                          <button
+                            onClick={() => toggleReviewExpansion(reviewId)}
+                            className="text-accent cursor-pointer text-sm mt-3 inline-block hover:underline font-medium"
+                          >
+                            {expandedReviews[reviewId]
+                              ? "Show less"
+                              : "Read full review"}
+                          </button>
                         )}
                       </div>
-                      <p className="text-text-secondary leading-relaxed">
-                        {review.content &&
-                        review.content.length > 300 &&
-                        !expandedReviews[review.id || ""]
-                          ? `${review.content.substring(0, 300)}...`
-                          : review.content}
-                      </p>
-                      {review.content && review.content.length > 300 && (
-                        <button
-                          onClick={() => toggleReviewExpansion(review.id || "")}
-                          className="text-accent cursor-pointer text-sm mt-3 inline-block hover:underline font-medium"
-                        >
-                          {expandedReviews[review.id || ""]
-                            ? "Show less"
-                            : "Read full review"}
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
+              </div>
+            )}
+            {visibleCount < allReviews.length && (
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 10)}
+                  className="px-6 py-2 bg-accent text-white rounded-lg cursor-pointer"
+                >
+                  Show More Reviews
+                </button>
               </div>
             )}
           </div>

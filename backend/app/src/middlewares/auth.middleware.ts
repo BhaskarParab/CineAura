@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 // 1. We define exactly what our Request should look like right here
-interface AuthenticatedRequest extends Request {
+interface AuthRequest extends Request {
   user?: {
     id: string;
   };
@@ -33,7 +33,7 @@ export const jwtVerifyMiddleware = (
 
     // 2. We use a Type Cast (as) right here. 
     // This tells TypeScript: "Trust me, I know what I'm doing."
-    (req as AuthenticatedRequest).user = {
+    (req as AuthRequest).user = {
       id: decoded.id,
     };
 

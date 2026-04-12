@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { SearchItem } from "../../types/SearchType";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { hideLoader, showLoader } from "../../Redux/LoaderSlice/LoaderSlice";
+import { useDispatch } from "react-redux";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w1280";
 
@@ -9,6 +11,7 @@ function HomeTop() {
   const apiKey = import.meta.env.VITE_API_KEY;
   const [storeMedia, setStoreMedia] = useState<SearchItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const dispatch = useDispatch();
   const timerRef = useRef<number | null>(null);
   const sliderRef = useRef<HTMLDivElement | null>(null);
 
@@ -16,12 +19,18 @@ function HomeTop() {
 
   useEffect(() => {
     const fetchTrendingMedia = async () => {
-      const res = await fetch(
+      try {
+        dispatch(showLoader())
+        const res = await fetch(
         `https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}`
       );
       const data = await res.json();
-      console.log(data);
       setStoreMedia(data.results);
+      } catch (error) {
+        console.log(error);
+      }finally{
+        dispatch(hideLoader())
+      }
     };
 
     fetchTrendingMedia();
@@ -82,7 +91,7 @@ function HomeTop() {
       navigate(`/movie/${ele.id}/${slug}`);
     } else {
       const slug = ele.name.toLowerCase().replace(/\s+/g, "-");
-      navigate(`/webseries/${ele.id}/${slug}`);
+      navigate(`/tv/${ele.id}/${slug}`);
     }
   };
 

@@ -20,15 +20,15 @@ function DarkToggle(){
     {isDark === 'dark' ? (
         <Sun
           size={30}
-          className="cursor-pointer select-none"
-          style={{ color: "white" }}
+          className="cursor-pointer select-none text-text-secondary hover:opacity-80"
+          // style={{ color: "white" }}
           onClick={handleToggle}
         />
       ) : (
         <Moon
           size={30}
-          className="cursor-pointer select-none"
-          style={{ color: "black" }}
+          className="cursor-pointer select-none text-text-secondary hover:opacity-80"
+          // style={{ color: "black" }}
           onClick={handleToggle}
         />
       )}

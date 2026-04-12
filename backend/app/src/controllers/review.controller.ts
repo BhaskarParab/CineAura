@@ -6,13 +6,13 @@ import { AuthRequest } from "../types";
 // POST => It will create a new review for that movie
 
 export const createReview = async (req: AuthRequest, res: Response) => {
-  const { content, rating, tmdbId } = req.body;
+  const { content, rating, tmdbId, mediaType } = req.body;
 
-  if (!content || !rating || !tmdbId) {
-  return res.status(400).json({
-    message: "All fields are required",
-  });
-}
+  if (!content || !rating || !tmdbId || !mediaType) {
+    return res.status(400).json({
+      message: "All fields are required",
+    });
+  }
 
   const userId = req.user!.id;
 
@@ -21,6 +21,7 @@ export const createReview = async (req: AuthRequest, res: Response) => {
       where: {
         userId,
         tmdbId,
+        mediaType,
       },
     });
 
@@ -36,11 +37,20 @@ export const createReview = async (req: AuthRequest, res: Response) => {
         rating,
         userId,
         tmdbId,
+        mediaType,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
       },
     });
 
     res.status(201).json(review);
-
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong",
@@ -53,21 +63,26 @@ export const createReview = async (req: AuthRequest, res: Response) => {
 
 export const getReviews = async (req: AuthRequest, res: Response) => {
   const tmdbId = Number(req.params.tmdbId);
+  const mediaType = req.params.mediaType as "MOVIE" | "TV";
 
-  if(!tmdbId || isNaN(tmdbId)){
+  if (isNaN(tmdbId) || !mediaType) {
     return res.status(400).json({
-      message: "tmdbID is invalid"
-    })
+      message: "tmdbID is invalid",
+    });
   }
 
   const reviews = await prisma.review.findMany({
-    where: { tmdbId },
+    where: {
+      tmdbId,
+      mediaType,
+    },
     include: {
       user: {
         select: {
           id: true,
           username: true,
-          email: true
+          email: true,
+          avatar: true,
         },
       },
     },
@@ -77,18 +92,27 @@ export const getReviews = async (req: AuthRequest, res: Response) => {
   res.json(reviews);
 };
 
-// PUT => It will update the review after checking the ownership of the review 
+// PUT => It will update the review after checking the ownership of the review
 
 export const updateReview = async (req: AuthRequest, res: Response) => {
   const reviewId = req.params.id as string;
   const { content, rating } = req.body;
   const userId = req.user!.id;
 
+  const existing = await prisma.review.findUnique({
+    where: { id: reviewId },
+  });
+
+  if (!existing || existing.userId !== userId) {
+    return res.status(403).json({
+      message: "Not allowed",
+    });
+  }
+
   try {
     const review = await prisma.review.update({
       where: {
         id: reviewId,
-        userId, 
       },
       data: {
         content,
@@ -104,17 +128,26 @@ export const updateReview = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// DELETE => It will delete the review after checking the ownership of the review 
+// DELETE => It will delete the review after checking the ownership of the review
 
 export const deleteReview = async (req: AuthRequest, res: Response) => {
   const reviewId = req.params.id as string;
   const userId = req.user!.id;
 
+  const existing = await prisma.review.findUnique({
+    where: { id: reviewId },
+  });
+
+  if (!existing || existing.userId !== userId) {
+    return res.status(403).json({
+      message: "Not allowed",
+    });
+  }
+
   try {
     await prisma.review.delete({
       where: {
         id: reviewId,
-        userId, 
       },
     });
 

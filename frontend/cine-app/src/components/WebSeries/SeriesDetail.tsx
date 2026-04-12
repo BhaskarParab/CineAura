@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { hideLoader, showLoader } from "../../Redux/LoaderSlice/LoaderSlice";
-import type { CrewMember, SeriesDetailType } from "../../types/SeriesDetail";
+import type {
+  CrewMember,
+  SeriesDetailType,
+  Video,
+} from "../../types/SeriesDetail";
 import {
   storeSeasons,
-  type SeasonWithEpisodes,
+  updateSeasonEpisodes,
 } from "../../Redux/SeriesSlice/StoreSeasonsSlice";
 import type { RootState } from "../../Redux/Store";
+import ReviewPage from "../Review Page/ReviewPage";
+import type { Review } from "../../types/MovieDetail";
 
 interface PersonType {
   id: number;
   name: string;
+}
+
+interface Season {
+  season_number: number;
 }
 
 function SeriesDetail() {
@@ -19,10 +29,20 @@ function SeriesDetail() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const location = useLocation();
+
+  const mediaType = location.pathname.startsWith("/tv") ? "TV" : "MOVIE";
+
   // Get series ID from URL parameters
   const { id } = useParams<{ id: string }>();
 
   const [seriesData, setSeriesData] = useState<SeriesDetailType | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [topReviews, setTopReviews] = useState<Review[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [trailer, setTrailer] = useState<Video | null>(null);
   const [expandedReviews, setExpandedReviews] = useState<
     Record<string, boolean>
   >({});
@@ -33,8 +53,15 @@ function SeriesDetail() {
   const [showAllCast, setShowAllCast] = useState(false);
   // const [toggleAccordian, setToggleAccordian] = useState(false)
   const fetchedSeasonsData = useSelector(
-    (state: RootState) => state.storeSeasons.seasonsData
+    (state: RootState) => state.storeSeasons.seasonsData,
   );
+
+  const allReviews = [
+    ...(reviews || []).map((r) => ({ ...r, type: "db" })),
+    ...(topReviews || []).map((r) => ({ ...r, type: "tmdb" })),
+  ];
+
+  const visibleReviews = allReviews.slice(0, visibleCount);
 
   useEffect(() => {
     if (!id) return;
@@ -43,28 +70,64 @@ function SeriesDetail() {
       dispatch(showLoader());
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/tv/${id}?api_key=${apiKey}&append_to_response=videos,credits,reviews`
+          `https://api.themoviedb.org/3/tv/${id}?api_key=${apiKey}&append_to_response=videos,credits,reviews`,
         );
         const data = await res.json();
         setSeriesData(data);
 
-        const totalSeasons = data.number_of_seasons;
+        const latestSeason = data.seasons
+          .filter((s: Season) => s.season_number > 0)
+          .pop();
 
-        const allSeasons: SeasonWithEpisodes[] = [];
+        // const totalSeasons = data.number_of_seasons;
+
+        // const latestSeason = data.seasons
+        //   .filter((s: Season) => s.season_number > 0) // ignore specials
+        //   .pop();
+
+        const latestSeasonVideosRes = await fetch(
+          `https://api.themoviedb.org/3/tv/${id}/season/${latestSeason?.season_number}/videos?api_key=${apiKey}`,
+        );
+
+        const latestSeasonVideos = await latestSeasonVideosRes.json();
+
+        const seasonTrailer = latestSeasonVideos.results?.find(
+          (vid: Video) => vid.type === "Trailer" && vid.site === "YouTube",
+        );
+
+        const seriesTrailer = data.videos?.results?.find(
+          (vid: Video) => vid.type === "Trailer" && vid.site === "YouTube",
+        );
+
+        setTrailer(seasonTrailer || seriesTrailer || null);
 
         // Fetch each season
-        for (let season = 1; season <= totalSeasons; season++) {
-          const seasonData = await fetch(
-            `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${apiKey}`
-          ).then((res) => res.json());
+        // const seasonPromises = [];
 
-          allSeasons.push({
-            season: season,
-            episodes: seasonData.episodes,
-          });
+        const seasonsList = data.seasons
+          .filter((s: Season) => s.season_number > 0)
+          .map((s: Season) => ({
+            season: s.season_number,
+            episodes: [],
+          }));
+
+        dispatch(storeSeasons(seasonsList));
+
+        if (latestSeason?.season_number) {
+          const res = await fetch(
+            `https://api.themoviedb.org/3/tv/${id}/season/${latestSeason.season_number}?api_key=${apiKey}`,
+          );
+
+          const seasonData = await res.json();
+
+          dispatch(
+            updateSeasonEpisodes({
+              season: latestSeason.season_number,
+              episodes: seasonData.episodes,
+            }),
+          );
         }
-        dispatch(storeSeasons(allSeasons));
-        console.log(allSeasons);
+        // console.log(allSeasons);
       } catch (error) {
         console.error("Error fetching series data:", error);
       } finally {
@@ -73,7 +136,101 @@ function SeriesDetail() {
     }
 
     fetchSeriesData();
-  }, [apiKey, id, dispatch]);
+
+    async function fetchSeriesReview() {
+      try {
+        const res = await fetch(
+          `http://localhost:5001/api/reviews/${mediaType}/${id}`,
+          {
+            method: "GET",
+          },
+        );
+
+        const data = await res.json();
+
+        setReviews(data);
+
+        if (!res.ok) {
+          throw new Error(data.message || "Something went wrong");
+        }
+
+        console.log("Review added!");
+      } catch (err: unknown) {
+        console.error(err);
+
+        if (err instanceof Error) {
+          console.log(err.message);
+        } else {
+          console.log("Something went wrong");
+        }
+      }
+    }
+
+    fetchSeriesReview();
+  }, [apiKey, id, dispatch, mediaType]);
+
+  const getTopReviews = async (pageNumber: number = 1) => {
+    if (!id) return;
+
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/tv/${id}/reviews?api_key=${apiKey}&page=${pageNumber}`,
+      );
+
+      const data = await res.json();
+
+      if (pageNumber === 1) {
+        // first load
+        setTopReviews(data.results);
+      } else {
+        // append more
+        setTopReviews((prev) => [...prev, ...data.results]);
+      }
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!id) return;
+
+    setPage(1);
+    setHasMore(true);
+    getTopReviews(1);
+  }, [id]);
+
+  useEffect(() => {
+    if (!hasMore) return;
+
+    if (visibleCount > allReviews.length - 5) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      getTopReviews(nextPage);
+    }
+  }, [visibleCount]);
+
+  const fetchSeasonEpisodes = async (seasonNumber: number) => {
+    const existing = fetchedSeasonsData.find((s) => s.season === seasonNumber);
+
+    if (existing && existing.episodes.length > 0) return;
+
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/tv/${id}/season/${seasonNumber}?api_key=${apiKey}`,
+      );
+
+      const data = await res.json();
+
+      dispatch(
+        updateSeasonEpisodes({
+          season: seasonNumber,
+          episodes: data.episodes,
+        }),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Format date to readable format
   const formatDate = (dateString: string) => {
@@ -94,14 +251,14 @@ function SeriesDetail() {
   // };
 
   // Find official trailer
-  const findTrailer = () => {
-    if (!seriesData?.videos?.results) return null;
-    return (
-      seriesData.videos.results.find(
-        (video) => video.type === "Trailer" && video.official === true
-      ) || seriesData.videos.results.find((video) => video.type === "Trailer")
-    );
-  };
+  // const findTrailer = () => {
+  //   if (!seriesData?.videos?.results) return null;
+  //   return (
+  //     seriesData.videos.results.find(
+  //       (video) => video.type === "Trailer" && video.official === true,
+  //     ) || seriesData.videos.results.find((video) => video.type === "Trailer")
+  //   );
+  // };
 
   // Get cast members (either top 10 or all based on state)
   const getCast = () => {
@@ -115,15 +272,15 @@ function SeriesDetail() {
   const getDirectors = () => {
     if (!seriesData?.credits?.crew) return [];
     return seriesData.credits.crew.filter(
-      (person: CrewMember) => person.job === "Director"
+      (person: CrewMember) => person.job === "Director",
     );
   };
 
   // Get top reviews
-  const getTopReviews = () => {
-    if (!seriesData?.reviews?.results) return [];
-    return seriesData.reviews.results.slice(0, 3);
-  };
+  // const getTopReviews = () => {
+  //   if (!seriesData?.reviews?.results) return [];
+  //   return seriesData.reviews.results.slice(0, 3);
+  // };
 
   // Toggle review expansion
   const toggleReviewExpansion = (reviewId: string) => {
@@ -133,16 +290,20 @@ function SeriesDetail() {
     }));
   };
 
-  const handleToggleAccordian = (seasonNumber: number) => {
+  const handleToggleAccordian = async (seasonNumber: number) => {
     setExpandedSeasons((prev) => ({
       ...prev,
       [seasonNumber]: !prev[seasonNumber],
     }));
+
+    if (!expandedSeasons[seasonNumber]) {
+      await fetchSeasonEpisodes(seasonNumber);
+    }
   };
 
   const handlePerson = (person: PersonType, series: SeriesDetailType) => {
     const slug = person.name.toLowerCase().replace(/\s+/g, "-");
-    navigate(`/webseries/${series.id}/person/${person.id}/${slug}`);
+    navigate(`/tv/${series.id}/person/${person.id}/${slug}`);
   };
 
   if (!seriesData) {
@@ -158,10 +319,10 @@ function SeriesDetail() {
     );
   }
 
-  const trailer = findTrailer();
+  // const trailer = findTrailer();
   const cast = getCast();
   const directors = getDirectors();
-  const topReviews = getTopReviews();
+  // const topReviews = getTopReviews();
 
   return (
     <div className="bg-bg-primary text-text-primary mt-12 sm:mt-14 min-h-screen">
@@ -212,8 +373,8 @@ function SeriesDetail() {
                       seriesData.tagline.length < 20
                         ? "md:text-lg" // short
                         : seriesData.tagline.length <= 50
-                        ? "md:text-sm" // medium
-                        : "md:text-sm" // long
+                          ? "md:text-sm" // medium
+                          : "md:text-sm" // long
                     } text-text-secondary sm:text-gray-300 italic mb-4`}
                   >
                     "{seriesData.tagline}"
@@ -425,7 +586,7 @@ function SeriesDetail() {
                       >
                         <button
                           onClick={() => handleToggleAccordian(season.season)}
-                          className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-bg-secondary transition-colors"
+                          className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-bg-secondary transition-colors cursor-pointer"
                         >
                           <div className="flex items-center">
                             <div className="w-12 h-16 bg-bg-secondary rounded mr-4 flex items-center justify-center">
@@ -438,7 +599,9 @@ function SeriesDetail() {
                                 Season {season.season}
                               </h3>
                               <p className="text-text-secondary text-sm">
-                                {season.episodes.length} Episodes
+                                {season.episodes.length > 0
+                                  ? `${season.episodes.length} Episodes`
+                                  : "Click to load episodes"}
                               </p>
                             </div>
                           </div>
@@ -479,47 +642,54 @@ function SeriesDetail() {
                         {expandedSeasons[season.season] && (
                           <div className="px-6 pb-4 border-t border-border">
                             <div className="mt-4 space-y-4">
-                              {season.episodes.map((episode) => (
-                                <div
-                                  key={episode.id}
-                                  className="flex gap-4 p-3 rounded-lg hover:bg-bg-secondary transition-colors"
-                                >
-                                  {episode.still_path ? (
-                                    <img
-                                      src={`https://image.tmdb.org/t/p/w185${episode.still_path}`}
-                                      alt={episode.name}
-                                      className="w-24 h-14 object-cover rounded"
-                                    />
-                                  ) : (
-                                    <div className="w-24 h-14 bg-bg-secondary rounded flex items-center justify-center">
-                                      <span className="text-text-secondary text-xs">
-                                        No Image
-                                      </span>
-                                    </div>
-                                  )}
-                                  <div className="flex-1">
-                                    <h4 className="font-medium text-text-primary">
-                                      Episode {episode.episode_number}:{" "}
-                                      {episode.name}
-                                    </h4>
-                                    <p className="text-text-secondary text-sm mb-1">
-                                      {episode.air_date &&
-                                        formatDate(episode.air_date)}
-                                      <span className="ml-2">
-                                        <span className="text-yellow-400">
-                                          ★
-                                        </span>{" "}
-                                        {episode.vote_average !== undefined
-                                          ? episode.vote_average.toFixed(1)
-                                          : ""}
-                                      </span>
-                                    </p>
-                                    <p className="text-text-secondary text-sm line-clamp-2">
-                                      {episode.overview}
-                                    </p>
-                                  </div>
+                              {season.episodes.length === 0 ? (
+                                <div className="flex items-center gap-2 text-text-secondary text-sm">
+                                  <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                                  Loading episodes...
                                 </div>
-                              ))}
+                              ) : (
+                                season.episodes.map((episode) => (
+                                  <div
+                                    key={episode.id}
+                                    className="flex gap-4 p-3 rounded-lg hover:bg-bg-secondary transition-colors"
+                                  >
+                                    {episode.still_path ? (
+                                      <img
+                                        src={`https://image.tmdb.org/t/p/w185${episode.still_path}`}
+                                        alt={episode.name}
+                                        className="w-24 h-14 object-cover rounded"
+                                      />
+                                    ) : (
+                                      <div className="w-24 h-14 bg-bg-secondary rounded flex items-center justify-center">
+                                        <span className="text-text-secondary text-xs">
+                                          No Image
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="flex-1">
+                                      <h4 className="font-medium text-text-primary">
+                                        Episode {episode.episode_number}:{" "}
+                                        {episode.name}
+                                      </h4>
+                                      <p className="text-text-secondary text-sm mb-1">
+                                        {episode.air_date &&
+                                          formatDate(episode.air_date)}
+                                        <span className="ml-2">
+                                          <span className="text-yellow-400">
+                                            ★
+                                          </span>{" "}
+                                          {episode.vote_average !== undefined
+                                            ? episode.vote_average.toFixed(1)
+                                            : ""}
+                                        </span>
+                                      </p>
+                                      <p className="text-text-secondary text-sm line-clamp-2">
+                                        {episode.overview}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))
+                              )}
                             </div>
                           </div>
                         )}
@@ -560,11 +730,12 @@ function SeriesDetail() {
             )}
 
             {/* Trailer */}
-            {trailer && (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4 text-text-primary">
-                  Trailer
-                </h2>
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold mb-4 text-text-primary">
+                Trailer
+              </h2>
+
+              {trailer ? (
                 <div className="rounded-xl overflow-hidden shadow-lg border border-border">
                   <iframe
                     title={trailer.name}
@@ -572,11 +743,15 @@ function SeriesDetail() {
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
-                    className="w-full h-64 md:h-96"
-                  ></iframe>
+                    className="w-full h-64 md:h-140"
+                  />
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="w-full h-64 md:h-96 flex items-center justify-center border border-border rounded-xl text-text-secondary">
+                  No trailer available
+                </div>
+              )}
+            </div>
 
             {/* Cast */}
             {cast.length > 0 && (
@@ -636,58 +811,111 @@ function SeriesDetail() {
               </div>
             )}
 
-            {/* Reviews */}
-            {topReviews.length > 0 && (
+            <ReviewPage
+              movieId={seriesData.id}
+              mediaType={mediaType}
+              setReviews={setReviews}
+            />
+
+            {visibleReviews.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4 text-text-primary">
+                <h2 className="text-2xl font-bold mb-6 text-text-primary">
                   Reviews
                 </h2>
+
                 <div className="space-y-4">
-                  {topReviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="bg-card rounded-xl p-6 shadow-md border border-border"
-                    >
-                      <div className="flex items-center mb-3">
-                        <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center mr-3">
-                          <span className="text-white font-bold">
-                            {review.author.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                        <h3 className="font-semibold text-text-primary">
-                          {review.author}
-                        </h3>
-                        {review.author_details.rating && (
-                          <div className="flex items-center ml-auto bg-yellow-100 dark:bg-yellow-900 px-2 py-1 rounded">
-                            <span className="text-yellow-600 dark:text-yellow-400 mr-1">
-                              ★
-                            </span>
-                            <span className="text-yellow-600 dark:text-yellow-400 font-medium">
-                              {review.author_details.rating}/10
-                            </span>
+                  {visibleReviews.map((review) => {
+                    const isDB = review.type === "db";
+                    const reviewId = String(isDB ? review.id : review.id_);
+                    const avatarPath = isDB
+                      ? review.user.avatar
+                      : review.author_details?.avatar_path;
+
+                    const avatarUrl =
+                      !isDB && avatarPath
+                        ? avatarPath.startsWith("/http")
+                          ? avatarPath.slice(1)
+                          : `https://image.tmdb.org/t/p/w200${avatarPath}`
+                        : avatarPath;
+
+                    return (
+                      <div
+                        key={review.id}
+                        className="bg-card rounded-xl p-6 shadow-md border border-border"
+                      >
+                        {/* Header */}
+                        <div className="flex items-center mb-3">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-accent flex items-center justify-center mr-3">
+                            {avatarUrl ? (
+                              <img
+                                src={avatarUrl}
+                                alt="avatar"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-white font-bold">
+                                {(isDB ? review.user.username : review.author)
+                                  ?.charAt(0)
+                                  ?.toUpperCase() || "U"}
+                              </span>
+                            )}
                           </div>
+
+                          <h3 className="font-semibold text-text-primary">
+                            {isDB ? review.user.username : review.author}
+                          </h3>
+
+                          {(isDB
+                            ? review.rating
+                            : review.author_details.rating) && (
+                            <div className="flex items-center ml-auto bg-yellow-100 dark:bg-yellow-900 px-2 py-1 rounded">
+                              <span className="text-yellow-600 dark:text-yellow-400 mr-1">
+                                ★
+                              </span>
+                              <span className="text-yellow-600 dark:text-yellow-400 font-medium">
+                                {isDB
+                                  ? review.rating
+                                  : review.author_details.rating}
+                                /10
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        <p className="text-text-secondary leading-relaxed">
+                          {review.content &&
+                          review.content.length > 300 &&
+                          !expandedReviews[reviewId]
+                            ? `${review.content.substring(0, 300)}...`
+                            : review.content}
+                        </p>
+
+                        {/* Read More */}
+                        {review.content && review.content.length > 300 && (
+                          <button
+                            onClick={() => toggleReviewExpansion(reviewId)}
+                            className="text-accent cursor-pointer text-sm mt-3 inline-block hover:underline font-medium"
+                          >
+                            {expandedReviews[reviewId]
+                              ? "Show less"
+                              : "Read full review"}
+                          </button>
                         )}
                       </div>
-                      <p className="text-text-secondary leading-relaxed">
-                        {review.content &&
-                        review.content.length > 300 &&
-                        !expandedReviews[review.id || ""]
-                          ? `${review.content.substring(0, 300)}...`
-                          : review.content}
-                      </p>
-                      {review.content && review.content.length > 300 && (
-                        <button
-                          onClick={() => toggleReviewExpansion(review.id || "")}
-                          className="text-accent cursor-pointer text-sm mt-3 inline-block hover:underline font-medium"
-                        >
-                          {expandedReviews[review.id || ""]
-                            ? "Show less"
-                            : "Read full review"}
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
+              </div>
+            )}
+            {visibleCount < allReviews.length && (
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 10)}
+                  className="px-6 py-2 bg-accent text-white rounded-lg cursor-pointer"
+                >
+                  Show More Reviews
+                </button>
               </div>
             )}
           </div>

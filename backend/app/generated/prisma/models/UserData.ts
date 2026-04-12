@@ -29,6 +29,8 @@ export type UserDataMinAggregateOutputType = {
   username: string | null
   email: string | null
   password: string | null
+  googleId: string | null
+  avatar: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -38,6 +40,8 @@ export type UserDataMaxAggregateOutputType = {
   username: string | null
   email: string | null
   password: string | null
+  googleId: string | null
+  avatar: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,6 +51,8 @@ export type UserDataCountAggregateOutputType = {
   username: number
   email: number
   password: number
+  googleId: number
+  avatar: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -58,6 +64,8 @@ export type UserDataMinAggregateInputType = {
   username?: true
   email?: true
   password?: true
+  googleId?: true
+  avatar?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -67,6 +75,8 @@ export type UserDataMaxAggregateInputType = {
   username?: true
   email?: true
   password?: true
+  googleId?: true
+  avatar?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -76,6 +86,8 @@ export type UserDataCountAggregateInputType = {
   username?: true
   email?: true
   password?: true
+  googleId?: true
+  avatar?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -157,7 +169,9 @@ export type UserDataGroupByOutputType = {
   id: string
   username: string
   email: string
-  password: string
+  password: string | null
+  googleId: string | null
+  avatar: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserDataCountAggregateOutputType | null
@@ -187,7 +201,9 @@ export type UserDataWhereInput = {
   id?: Prisma.StringFilter<"UserData"> | string
   username?: Prisma.StringFilter<"UserData"> | string
   email?: Prisma.StringFilter<"UserData"> | string
-  password?: Prisma.StringFilter<"UserData"> | string
+  password?: Prisma.StringNullableFilter<"UserData"> | string | null
+  googleId?: Prisma.StringNullableFilter<"UserData"> | string | null
+  avatar?: Prisma.StringNullableFilter<"UserData"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UserData"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserData"> | Date | string
   reviews?: Prisma.ReviewListRelationFilter
@@ -197,7 +213,9 @@ export type UserDataOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  password?: Prisma.SortOrder
+  password?: Prisma.SortOrderInput | Prisma.SortOrder
+  googleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  avatar?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
@@ -210,7 +228,9 @@ export type UserDataWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.UserDataWhereInput | Prisma.UserDataWhereInput[]
   OR?: Prisma.UserDataWhereInput[]
   NOT?: Prisma.UserDataWhereInput | Prisma.UserDataWhereInput[]
-  password?: Prisma.StringFilter<"UserData"> | string
+  password?: Prisma.StringNullableFilter<"UserData"> | string | null
+  googleId?: Prisma.StringNullableFilter<"UserData"> | string | null
+  avatar?: Prisma.StringNullableFilter<"UserData"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UserData"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserData"> | Date | string
   reviews?: Prisma.ReviewListRelationFilter
@@ -220,7 +240,9 @@ export type UserDataOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  password?: Prisma.SortOrder
+  password?: Prisma.SortOrderInput | Prisma.SortOrder
+  googleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  avatar?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserDataCountOrderByAggregateInput
@@ -235,7 +257,9 @@ export type UserDataScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"UserData"> | string
   username?: Prisma.StringWithAggregatesFilter<"UserData"> | string
   email?: Prisma.StringWithAggregatesFilter<"UserData"> | string
-  password?: Prisma.StringWithAggregatesFilter<"UserData"> | string
+  password?: Prisma.StringNullableWithAggregatesFilter<"UserData"> | string | null
+  googleId?: Prisma.StringNullableWithAggregatesFilter<"UserData"> | string | null
+  avatar?: Prisma.StringNullableWithAggregatesFilter<"UserData"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserData"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserData"> | Date | string
 }
@@ -244,7 +268,9 @@ export type UserDataCreateInput = {
   id?: string
   username: string
   email: string
-  password: string
+  password?: string | null
+  googleId?: string | null
+  avatar?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
@@ -254,7 +280,9 @@ export type UserDataUncheckedCreateInput = {
   id?: string
   username: string
   email: string
-  password: string
+  password?: string | null
+  googleId?: string | null
+  avatar?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -264,7 +292,9 @@ export type UserDataUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
@@ -274,7 +304,9 @@ export type UserDataUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -284,7 +316,9 @@ export type UserDataCreateManyInput = {
   id?: string
   username: string
   email: string
-  password: string
+  password?: string | null
+  googleId?: string | null
+  avatar?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -293,7 +327,9 @@ export type UserDataUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -302,7 +338,9 @@ export type UserDataUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -312,6 +350,8 @@ export type UserDataCountOrderByAggregateInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
+  avatar?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -321,6 +361,8 @@ export type UserDataMaxOrderByAggregateInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
+  avatar?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -330,6 +372,8 @@ export type UserDataMinOrderByAggregateInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
+  avatar?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -341,6 +385,10 @@ export type UserDataScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -365,7 +413,9 @@ export type UserDataCreateWithoutReviewsInput = {
   id?: string
   username: string
   email: string
-  password: string
+  password?: string | null
+  googleId?: string | null
+  avatar?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -374,7 +424,9 @@ export type UserDataUncheckedCreateWithoutReviewsInput = {
   id?: string
   username: string
   email: string
-  password: string
+  password?: string | null
+  googleId?: string | null
+  avatar?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -399,7 +451,9 @@ export type UserDataUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -408,7 +462,9 @@ export type UserDataUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -449,6 +505,8 @@ export type UserDataSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   username?: boolean
   email?: boolean
   password?: boolean
+  googleId?: boolean
+  avatar?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   reviews?: boolean | Prisma.UserData$reviewsArgs<ExtArgs>
@@ -460,6 +518,8 @@ export type UserDataSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   username?: boolean
   email?: boolean
   password?: boolean
+  googleId?: boolean
+  avatar?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["userData"]>
@@ -469,6 +529,8 @@ export type UserDataSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   username?: boolean
   email?: boolean
   password?: boolean
+  googleId?: boolean
+  avatar?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["userData"]>
@@ -478,11 +540,13 @@ export type UserDataSelectScalar = {
   username?: boolean
   email?: boolean
   password?: boolean
+  googleId?: boolean
+  avatar?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserDataOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "createdAt" | "updatedAt", ExtArgs["result"]["userData"]>
+export type UserDataOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "googleId" | "avatar" | "createdAt" | "updatedAt", ExtArgs["result"]["userData"]>
 export type UserDataInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviews?: boolean | Prisma.UserData$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.UserDataCountOutputTypeDefaultArgs<ExtArgs>
@@ -499,7 +563,9 @@ export type $UserDataPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     id: string
     username: string
     email: string
-    password: string
+    password: string | null
+    googleId: string | null
+    avatar: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["userData"]>
@@ -930,6 +996,8 @@ export interface UserDataFieldRefs {
   readonly username: Prisma.FieldRef<"UserData", 'String'>
   readonly email: Prisma.FieldRef<"UserData", 'String'>
   readonly password: Prisma.FieldRef<"UserData", 'String'>
+  readonly googleId: Prisma.FieldRef<"UserData", 'String'>
+  readonly avatar: Prisma.FieldRef<"UserData", 'String'>
   readonly createdAt: Prisma.FieldRef<"UserData", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserData", 'DateTime'>
 }
