@@ -32,8 +32,8 @@
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
 
-    "rootDir": ".",
-    "outDir": "dist",
+    "rootDir": "./",
+    "outDir": "./dist",
 
     // Recommended Options
     "strict": true,
