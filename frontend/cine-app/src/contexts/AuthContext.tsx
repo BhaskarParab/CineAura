@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/auth/me", {
+      const res = await fetch("https://cineaura-production.up.railway.app/api/auth/me", {
         method: "GET",
         credentials: "include",
       });

@@ -47,7 +47,7 @@ const ReviewPage = ({ movieId, mediaType, setReviews }: ReviewPageProps) => {
     }
 
     try {
-      const res = await fetch("http://localhost:5001/api/reviews/", {
+      const res = await fetch("https://cineaura-production.up.railway.app/api/reviews/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -14,7 +14,7 @@ const LogoutModal = ({ isOpen, onClose }: LogoutModalProps) => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:5001/api/auth/logout", {
+      const res = await fetch("https://cineaura-production.up.railway.app/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
