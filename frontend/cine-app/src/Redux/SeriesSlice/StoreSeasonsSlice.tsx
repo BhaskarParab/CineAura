@@ -27,6 +27,7 @@ export interface SeasonData {
 export interface SeasonWithEpisodes {
   season: number;
   episodes: Episode[];
+  isLoading?: boolean;
 }
 
 export interface SeasonsState {
@@ -34,18 +35,36 @@ export interface SeasonsState {
 }
 
 const initialState: SeasonsState = {
-  seasonsData: []
+  seasonsData: [],
 };
 
 const storeSeasonsSlice = createSlice({
-  name: 'storeSeasons',
+  name: "storeSeasons",
   initialState,
   reducers: {
-    storeSeasons: (state, action: PayloadAction<SeasonWithEpisodes []>) => {
+    storeSeasons: (state, action: PayloadAction<SeasonWithEpisodes[]>) => {
       state.seasonsData = action.payload;
-    }
-  }
-})
+    },
 
-export const { storeSeasons } = storeSeasonsSlice.actions
-export default storeSeasonsSlice
+    updateSeasonEpisodes: (
+      state,
+      action: PayloadAction<{ season: number; episodes: Episode[] }>,
+    ) => {
+      const { season, episodes } = action.payload;
+
+      const existingSeason = state.seasonsData.find((s) => s.season === season);
+
+      if (existingSeason) {
+        existingSeason.episodes = episodes;
+      } else {
+        state.seasonsData.push({ season, episodes });
+      }
+    },
+    resetSeasons: (state) => {
+      state.seasonsData = [];
+    },
+  },
+});
+
+export const { storeSeasons, updateSeasonEpisodes, resetSeasons} = storeSeasonsSlice.actions;
+export default storeSeasonsSlice;

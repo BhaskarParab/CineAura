@@ -5,7 +5,7 @@ import { createReview, getReviews, updateReview, deleteReview } from "../control
 const router: Router = express.Router()
 
 router.post('/',jwtVerifyMiddleware, createReview)
-router.get('/:tmdbId',jwtVerifyMiddleware, getReviews)
+router.get('/:mediaType/:tmdbId', getReviews)
 router.put("/:id", jwtVerifyMiddleware, updateReview)
 router.delete("/:id", jwtVerifyMiddleware, deleteReview)
 

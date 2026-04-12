@@ -61,7 +61,7 @@ export interface Review {
   };
   content: string;
   created_at?: string;
-  id?: string;
+  id_?: string;
   updated_at?: string;
   url?: string;
 }
@@ -162,3 +162,23 @@ export interface GenreApiResponse {
 
 // Union type for both movie types
 export type Movie = MovieType | MovieDetailType;
+
+// Reviews data type
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  avatar: string;
+}
+
+export interface Review {
+  id: string;
+  content: string;
+  rating: number;
+  userId: string;
+  tmdbId: number;
+  createdAt: string;   // ISO string from backend
+  updatedAt: string;
+  user: User;
+}

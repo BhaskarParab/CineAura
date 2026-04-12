@@ -77,7 +77,7 @@ function PersonDetail() {
 
         // Fetch person details
         const personResponse = await fetch(
-          `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&language=en-US`
+          `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&language=en-US&include_adult=false`,
         );
 
         if (!personResponse.ok) {
@@ -89,7 +89,7 @@ function PersonDetail() {
 
         // Fetch person credits
         const creditsResponse = await fetch(
-          `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}&language=en-US`
+          `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}&language=en-US&include_adult=false`,
         );
 
         if (!creditsResponse.ok) {
@@ -100,7 +100,7 @@ function PersonDetail() {
         setCredits(creditsData);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
+          err instanceof Error ? err.message : "An unknown error occurred",
         );
       } finally {
         dispatch(hideLoader());
@@ -222,14 +222,20 @@ function PersonDetail() {
 
   // Handle navigation to movie details
   const handleMovieClick = (movie: MediaItem) => {
-    const slug = movie.title.toLowerCase().replace(/\s+/g, "-");
+    const slug = movie.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-") // remove special chars
+      .replace(/^-+|-+$/g, "");
     navigate(`/movie/${movie.id}/${slug}`);
   };
 
   // Handle navigation to TV show details
   const handleTVShowClick = (tvShow: MediaItem) => {
-    const slug = tvShow.title.toLowerCase().replace(/\s+/g, "-");
-    navigate(`/webseries/${tvShow.id}/${slug}`);
+    const slug = tvShow.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-") // remove special chars
+      .replace(/^-+|-+$/g, "");
+    navigate(`/tv/${tvShow.id}/${slug}`);
   };
 
   // Handle navigation to other media details
@@ -240,7 +246,7 @@ function PersonDetail() {
       navigate(`/movie/${item.id}/${slug}`);
     } else if (item.media_type === "tv") {
       const slug = item.title.toLowerCase().replace(/\s+/g, "-");
-      navigate(`/webseries/${item.id}/${slug}`);
+      navigate(`/tv/${item.id}/${slug}`);
     } else {
       // For other media types, you might need to handle differently
       // For now, we'll just log it
@@ -273,7 +279,7 @@ function PersonDetail() {
     castList.filter((item) => item.media_type === "tv").length > 20;
   const hasMoreOthers =
     castList.filter(
-      (item) => item.media_type !== "movie" && item.media_type !== "tv"
+      (item) => item.media_type !== "movie" && item.media_type !== "tv",
     ).length > 20;
 
   // Get counts for each category
@@ -283,7 +289,7 @@ function PersonDetail() {
     castList.filter((item) => item.media_type === "tv").length || 0;
   const otherCount =
     castList.filter(
-      (item) => item.media_type !== "movie" && item.media_type !== "tv"
+      (item) => item.media_type !== "movie" && item.media_type !== "tv",
     ).length || 0;
 
   return (
@@ -301,12 +307,12 @@ function PersonDetail() {
             ></div>
           ) : (
             <div className="bg-bg-secondary flex h-full w-full items-center justify-center">
-              <span className="text-text-secondary">No Profile Image Available</span>
+              <span className="text-text-secondary">
+                No Profile Image Available
+              </span>
             </div>
           )}
-          <div
-            className="absolute inset-0 bg-linear-to-t from-black/70 from-10% to-transparent"
-          ></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 from-10% to-transparent"></div>
         </div>
 
         {/* Person Title and Basic Info */}
@@ -323,9 +329,7 @@ function PersonDetail() {
                   />
                 ) : (
                   <div className="bg-bg-secondary h-[450px] flex items-center justify-center">
-                    <span className="text-muted">
-                      No Image
-                    </span>
+                    <span className="text-muted">No Image</span>
                   </div>
                 )}
               </div>
@@ -695,7 +699,7 @@ function PersonDetail() {
                         <p className="text-text-secondary text-sm">
                           {item.release_date || item.first_air_date
                             ? new Date(
-                                item.release_date || item.first_air_date!
+                                item.release_date || item.first_air_date!,
                               ).getFullYear()
                             : "N/A"}
                         </p>

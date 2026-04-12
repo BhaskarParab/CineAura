@@ -58,6 +58,7 @@ function Home() {
       if (fetchedSeriesData.length > 0) return;
 
       try {
+        dispatch(showLoader())
         fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}`)
           .then((res) => {
             return res.json();
@@ -71,6 +72,9 @@ function Home() {
           });
       } catch (err) {
         console.log(err);
+      }
+      finally{
+        dispatch(hideLoader())
       }
     }
 
@@ -114,7 +118,7 @@ function Home() {
 
   const handleSeriesClick = (series: SeriesDataType) => {
     const slug = series.name.toLowerCase().replace(/\s+/g, "-");
-    navigate(`/webseries/${series.id}/${slug}`);
+    navigate(`/tv/${series.id}/${slug}`);
   };
 
   return (

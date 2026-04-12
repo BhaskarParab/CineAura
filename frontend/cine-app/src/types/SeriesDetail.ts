@@ -158,3 +158,20 @@ export interface SeriesDetailType {
   credits: Credits;
   reviews: Reviews;
 }
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+}
+
+export interface MyReview {
+  id: string;
+  content: string;
+  rating: number;
+  userId: string;
+  tmdbId: number;
+  createdAt: string;   // ISO string from backend
+  updatedAt: string;
+  user: User;
+}

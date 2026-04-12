@@ -42,6 +42,7 @@ export type ReviewMinAggregateOutputType = {
   rating: number | null
   userId: string | null
   tmdbId: number | null
+  mediaType: $Enums.MediaType | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +53,7 @@ export type ReviewMaxAggregateOutputType = {
   rating: number | null
   userId: string | null
   tmdbId: number | null
+  mediaType: $Enums.MediaType | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +64,7 @@ export type ReviewCountAggregateOutputType = {
   rating: number
   userId: number
   tmdbId: number
+  mediaType: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -84,6 +87,7 @@ export type ReviewMinAggregateInputType = {
   rating?: true
   userId?: true
   tmdbId?: true
+  mediaType?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +98,7 @@ export type ReviewMaxAggregateInputType = {
   rating?: true
   userId?: true
   tmdbId?: true
+  mediaType?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -104,6 +109,7 @@ export type ReviewCountAggregateInputType = {
   rating?: true
   userId?: true
   tmdbId?: true
+  mediaType?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -201,6 +207,7 @@ export type ReviewGroupByOutputType = {
   rating: number
   userId: string
   tmdbId: number
+  mediaType: $Enums.MediaType
   createdAt: Date
   updatedAt: Date
   _count: ReviewCountAggregateOutputType | null
@@ -234,6 +241,7 @@ export type ReviewWhereInput = {
   rating?: Prisma.IntFilter<"Review"> | number
   userId?: Prisma.StringFilter<"Review"> | string
   tmdbId?: Prisma.IntFilter<"Review"> | number
+  mediaType?: Prisma.EnumMediaTypeFilter<"Review"> | $Enums.MediaType
   createdAt?: Prisma.DateTimeFilter<"Review"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Review"> | Date | string
   user?: Prisma.XOR<Prisma.UserDataScalarRelationFilter, Prisma.UserDataWhereInput>
@@ -245,6 +253,7 @@ export type ReviewOrderByWithRelationInput = {
   rating?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tmdbId?: Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserDataOrderByWithRelationInput
@@ -252,7 +261,7 @@ export type ReviewOrderByWithRelationInput = {
 
 export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  userId_tmdbId?: Prisma.ReviewUserIdTmdbIdCompoundUniqueInput
+  userId_tmdbId_mediaType?: Prisma.ReviewUserIdTmdbIdMediaTypeCompoundUniqueInput
   AND?: Prisma.ReviewWhereInput | Prisma.ReviewWhereInput[]
   OR?: Prisma.ReviewWhereInput[]
   NOT?: Prisma.ReviewWhereInput | Prisma.ReviewWhereInput[]
@@ -260,10 +269,11 @@ export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   rating?: Prisma.IntFilter<"Review"> | number
   userId?: Prisma.StringFilter<"Review"> | string
   tmdbId?: Prisma.IntFilter<"Review"> | number
+  mediaType?: Prisma.EnumMediaTypeFilter<"Review"> | $Enums.MediaType
   createdAt?: Prisma.DateTimeFilter<"Review"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Review"> | Date | string
   user?: Prisma.XOR<Prisma.UserDataScalarRelationFilter, Prisma.UserDataWhereInput>
-}, "id" | "userId_tmdbId">
+}, "id" | "userId_tmdbId_mediaType">
 
 export type ReviewOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -271,6 +281,7 @@ export type ReviewOrderByWithAggregationInput = {
   rating?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tmdbId?: Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ReviewCountOrderByAggregateInput
@@ -289,6 +300,7 @@ export type ReviewScalarWhereWithAggregatesInput = {
   rating?: Prisma.IntWithAggregatesFilter<"Review"> | number
   userId?: Prisma.StringWithAggregatesFilter<"Review"> | string
   tmdbId?: Prisma.IntWithAggregatesFilter<"Review"> | number
+  mediaType?: Prisma.EnumMediaTypeWithAggregatesFilter<"Review"> | $Enums.MediaType
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Review"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Review"> | Date | string
 }
@@ -298,6 +310,7 @@ export type ReviewCreateInput = {
   content: string
   rating: number
   tmdbId: number
+  mediaType: $Enums.MediaType
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserDataCreateNestedOneWithoutReviewsInput
@@ -309,6 +322,7 @@ export type ReviewUncheckedCreateInput = {
   rating: number
   userId: string
   tmdbId: number
+  mediaType: $Enums.MediaType
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -318,6 +332,7 @@ export type ReviewUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   tmdbId?: Prisma.IntFieldUpdateOperationsInput | number
+  mediaType?: Prisma.EnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserDataUpdateOneRequiredWithoutReviewsNestedInput
@@ -329,6 +344,7 @@ export type ReviewUncheckedUpdateInput = {
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   tmdbId?: Prisma.IntFieldUpdateOperationsInput | number
+  mediaType?: Prisma.EnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -339,6 +355,7 @@ export type ReviewCreateManyInput = {
   rating: number
   userId: string
   tmdbId: number
+  mediaType: $Enums.MediaType
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -348,6 +365,7 @@ export type ReviewUpdateManyMutationInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   tmdbId?: Prisma.IntFieldUpdateOperationsInput | number
+  mediaType?: Prisma.EnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -358,6 +376,7 @@ export type ReviewUncheckedUpdateManyInput = {
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   tmdbId?: Prisma.IntFieldUpdateOperationsInput | number
+  mediaType?: Prisma.EnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -372,9 +391,10 @@ export type ReviewOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ReviewUserIdTmdbIdCompoundUniqueInput = {
+export type ReviewUserIdTmdbIdMediaTypeCompoundUniqueInput = {
   userId: string
   tmdbId: number
+  mediaType: $Enums.MediaType
 }
 
 export type ReviewCountOrderByAggregateInput = {
@@ -383,6 +403,7 @@ export type ReviewCountOrderByAggregateInput = {
   rating?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tmdbId?: Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -398,6 +419,7 @@ export type ReviewMaxOrderByAggregateInput = {
   rating?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tmdbId?: Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -408,6 +430,7 @@ export type ReviewMinOrderByAggregateInput = {
   rating?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tmdbId?: Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -467,11 +490,16 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type EnumMediaTypeFieldUpdateOperationsInput = {
+  set?: $Enums.MediaType
+}
+
 export type ReviewCreateWithoutUserInput = {
   id?: string
   content: string
   rating: number
   tmdbId: number
+  mediaType: $Enums.MediaType
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -481,6 +509,7 @@ export type ReviewUncheckedCreateWithoutUserInput = {
   content: string
   rating: number
   tmdbId: number
+  mediaType: $Enums.MediaType
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -520,6 +549,7 @@ export type ReviewScalarWhereInput = {
   rating?: Prisma.IntFilter<"Review"> | number
   userId?: Prisma.StringFilter<"Review"> | string
   tmdbId?: Prisma.IntFilter<"Review"> | number
+  mediaType?: Prisma.EnumMediaTypeFilter<"Review"> | $Enums.MediaType
   createdAt?: Prisma.DateTimeFilter<"Review"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Review"> | Date | string
 }
@@ -529,6 +559,7 @@ export type ReviewCreateManyUserInput = {
   content: string
   rating: number
   tmdbId: number
+  mediaType: $Enums.MediaType
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -538,6 +569,7 @@ export type ReviewUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   tmdbId?: Prisma.IntFieldUpdateOperationsInput | number
+  mediaType?: Prisma.EnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -547,6 +579,7 @@ export type ReviewUncheckedUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   tmdbId?: Prisma.IntFieldUpdateOperationsInput | number
+  mediaType?: Prisma.EnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -556,6 +589,7 @@ export type ReviewUncheckedUpdateManyWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   tmdbId?: Prisma.IntFieldUpdateOperationsInput | number
+  mediaType?: Prisma.EnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -568,6 +602,7 @@ export type ReviewSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   rating?: boolean
   userId?: boolean
   tmdbId?: boolean
+  mediaType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDataDefaultArgs<ExtArgs>
@@ -579,6 +614,7 @@ export type ReviewSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   rating?: boolean
   userId?: boolean
   tmdbId?: boolean
+  mediaType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDataDefaultArgs<ExtArgs>
@@ -590,6 +626,7 @@ export type ReviewSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   rating?: boolean
   userId?: boolean
   tmdbId?: boolean
+  mediaType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDataDefaultArgs<ExtArgs>
@@ -601,11 +638,12 @@ export type ReviewSelectScalar = {
   rating?: boolean
   userId?: boolean
   tmdbId?: boolean
+  mediaType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "rating" | "userId" | "tmdbId" | "createdAt" | "updatedAt", ExtArgs["result"]["review"]>
+export type ReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "rating" | "userId" | "tmdbId" | "mediaType" | "createdAt" | "updatedAt", ExtArgs["result"]["review"]>
 export type ReviewInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDataDefaultArgs<ExtArgs>
 }
@@ -627,6 +665,7 @@ export type $ReviewPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     rating: number
     userId: string
     tmdbId: number
+    mediaType: $Enums.MediaType
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["review"]>
@@ -1058,6 +1097,7 @@ export interface ReviewFieldRefs {
   readonly rating: Prisma.FieldRef<"Review", 'Int'>
   readonly userId: Prisma.FieldRef<"Review", 'String'>
   readonly tmdbId: Prisma.FieldRef<"Review", 'Int'>
+  readonly mediaType: Prisma.FieldRef<"Review", 'MediaType'>
   readonly createdAt: Prisma.FieldRef<"Review", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Review", 'DateTime'>
 }

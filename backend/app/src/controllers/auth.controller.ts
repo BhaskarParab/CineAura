@@ -5,6 +5,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookie from "cookie-parser";
 import { AuthRequest } from "../types";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_OAUTH_CLIENT_ID);
 
 export const registerUser = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
@@ -63,7 +66,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -93,7 +96,7 @@ export const loginUser = async (req: Request, res: Response) => {
       },
     });
 
-    if (!isUser) {
+    if (!isUser || !isUser.password) {
       return res.status(401).json({
         message: "Invalid email",
       });
@@ -117,7 +120,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -137,10 +140,10 @@ export const getMe = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
 
-    if(!userId){
-      return res.status(400).json({
-        message: "unauthorized"
-      })
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
     }
 
     const user = await prisma.userData.findUnique({
@@ -149,10 +152,11 @@ export const getMe = async (req: AuthRequest, res: Response) => {
         id: true,
         username: true,
         email: true,
+        avatar: true,
       },
     });
 
-    res.json(user);
+    res.status(200).json({ user });
   } catch {
     res.status(401).json({
       message: "Unauthorized",
@@ -163,11 +167,100 @@ export const getMe = async (req: AuthRequest, res: Response) => {
 export const logoutUser = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "lax",
   });
 
   res.status(200).json({
     message: "Logged out successfully",
   });
+};
+
+export const googleAuth = async (req: Request, res: Response) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({
+      message: "Token is required",
+    });
+  }
+
+  try {
+    const googleClientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+
+    if (!googleClientId) {
+      throw new Error("GOOGLE_CLIENT_ID is undefined");
+    }
+
+    // Verify Google token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: googleClientId,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload || !payload.email) {
+      return res.status(400).json({
+        message: "Invalid Google token",
+      });
+    }
+
+    const { email, name, picture, sub } = payload;
+
+    // sub = unique Google ID
+    let user = await prisma.userData.findUnique({
+      where: { email },
+    });
+
+    // If user doesn't exist → create
+    if (!user) {
+      user = await prisma.userData.create({
+        data: {
+          email,
+          username: name as string,
+          googleId: sub,
+          avatar: picture ?? null,
+          password: null, // no password for Google users
+        },
+      });
+    }
+
+    // If user exists but no googleId → link account
+    if (user && !user.googleId) {
+      user = await prisma.userData.update({
+        where: { id: user.id },
+        data: {
+          googleId: sub,
+          avatar: picture ?? null,
+        },
+      });
+    }
+
+    // Generate JWT (same as your system)
+    const jwtSecret = process.env.JWT_SECRET_KEY;
+
+    if (!jwtSecret) {
+      throw new Error("JWT_SECRET_KEY is undefined");
+    }
+
+    const jwtToken = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: "7d" });
+
+    // Set cookie (same config as your login)
+    res.cookie("token", jwtToken, {
+      // httpOnly: true,
+      secure: false, // true in production
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      message: "Google login successful",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({
+      message: "Google authentication failed",
+    });
+  }
 };

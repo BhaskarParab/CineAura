@@ -12,6 +12,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum MediaType {
+  MOVIE
+  TV
+}
+
 
 model UserData {
   id        String   @id @default(cuid())
@@ -33,17 +38,22 @@ model Review {
   id        String   @id @default(cuid())
 
   content   String
-  rating    Int
+  rating    Int      @db.SmallInt
 
   // Relation
   userId    String
-  user      UserData     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      UserData @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // TMDB reference
   tmdbId    Int
+  mediaType MediaType
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, tmdbId]) // one review per user per movie
+  // Prevent duplicate reviews
+  @@unique([userId, tmdbId, mediaType])
+
+  // Optional indexes for performance
+  @@index([tmdbId, mediaType])
 }

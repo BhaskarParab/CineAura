@@ -10,6 +10,9 @@ import Loader from "./components/Loader/Loader";
 import ScrollToTop from "./ScrollToTop";
 import SeriesDetail from "./components/WebSeries/SeriesDetail";
 import SearchResult from "./components/SearchResult/SearchResult";
+import SignUp from "./components/SignUp/SignUp";
+import Login from "./components/LogIn/LogIn";
+// import LogoutButton from "./components/Logout/Logout";
 
 function App() {
   return (
@@ -27,14 +30,17 @@ function App() {
               element={<PersonDetail />}
             />
             <Route
-              path="/webseries/:seriesId/person/:personId/:slug"
+              path="/tv/:seriesId/person/:personId/:slug"
               element={<PersonDetail />}
             />
             <Route path="/person/:personId/:slug" element={<PersonDetail />} />
-            <Route path="/webseries/:id/:slug" element={<SeriesDetail />} />
+            <Route path="/tv/:id/:slug" element={<SeriesDetail />} />
             <Route path="/results/:slug" element={<SearchResult />} />
             <Route path="/results/:slug/:slug" element={<SearchResult />} />
             <Route path="/results" element={<SearchResult />} />
+            <Route path="/sign-up" element={<SignUp/>}/>
+            <Route path="/log-in" element={<Login/>}/>
+            {/* <Route path="/log-out" element={<LogoutButton/>}/> */}
           </Routes>
           <Loader />
         </main>

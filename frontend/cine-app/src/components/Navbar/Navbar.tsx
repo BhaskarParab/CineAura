@@ -6,9 +6,13 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../Redux/Store";
 import DarkToggle from "../DarkToggle/DarkToggle";
 import SearchBar from "../SearchBar/SearchBar";
+import { LogIn, LogOut } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import LogoutButton from "../Logout/Logout";
 
 function Navbar() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const isDark = useSelector((state: RootState) => state.darkTheme.value);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -34,7 +38,7 @@ function Navbar() {
         </div>
 
         {/* CENTER - Menu (Desktop) */}
-        <div className="hidden md:flex flex-1 justify-center gap-8 lg:gap-10">
+        <div className="hidden md:flex flex-1 justify-center gap-8 lg:gap-10 md:mr-70 lg:mr-0">
           <a
             onClick={() => navigate("/")}
             className="cursor-pointer text-base sm:text-lg font-medium hover:opacity-80 "
@@ -56,22 +60,40 @@ function Navbar() {
         </div>
 
         {/* Search Bar - Desktop (between menu and toggle) */}
-        <div className="hidden md:flex absolute right-1/10 md:right-1/11 lg:right-1/12 items-center">
-          <div className="w-55 md:w-50 lg:w-110">
+        <div className="hidden md:flex absolute right-1/10 md:right-1/7 lg:right-1/12 items-center">
+          <div className="w-55 md:w-78 lg:w-110">
             <SearchBar />
           </div>
         </div>
 
         {/* Mobile Search Bar - Centered */}
-      <div className="md:hidden flex justify-center px-4 py-2 z-50">
-        <div className="w-full max-w-md">
-          <SearchBar />
+        <div className="md:hidden flex justify-center ml-2 px-4 py-2 z-50">
+          <div className="w-full max-w-md">
+            <SearchBar />
+          </div>
         </div>
-      </div>
+
+        <div className="flex gap-3">
+        {/* RIGHT - Controls (Desktop) */}
+        {!isAuthenticated ? (
+          <div
+            onClick={() => navigate("/sign-up")}
+            className="hidden md:flex items-center gap-3 transition-none cursor-pointer"
+          >
+            <LogIn size={29} className="text-text-secondary hover:opacity-80"/>
+          </div>
+        ) : (
+          <div className="hidden md:flex items-center gap-3 transition-none cursor-pointer">
+            <LogoutButton>
+              <LogOut size={29} className="text-text-secondary"/>
+            </LogoutButton>
+          </div>
+        )}
 
         {/* RIGHT - Controls (Desktop) */}
         <div className="hidden md:flex items-center gap-3 transition-none">
           <DarkToggle />
+        </div>
         </div>
 
         {/* Mobile Controls - Centered Search Bar and Menu Button */}
@@ -126,6 +148,23 @@ function Navbar() {
             >
               Explore
             </a>
+            {!isAuthenticated ? (
+              <a
+                onClick={() => handleNavigation("/sign-up")}
+                className="cursor-pointer font-medium hover:opacity-70 py-2"
+              >
+                Login
+              </a>
+            ) : (
+              <a
+                // onClick={() => handleNavigation("/results")}
+                className="cursor-pointer font-medium hover:opacity-70 py-2"
+              >
+                <LogoutButton>
+                  Logout
+                </LogoutButton>
+              </a>
+            )}
           </div>
 
           <div className="mt-auto flex justify-start pb-8 transition-none">
