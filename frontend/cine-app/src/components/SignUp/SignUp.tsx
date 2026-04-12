@@ -23,7 +23,7 @@ const SignUp = () => {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/auth/register", {
+      const res = await fetch("https://cineaura-production.up.railway.app/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -138,7 +138,7 @@ const SignUp = () => {
           onSuccess={async (credentialResponse) => {
             const token = credentialResponse.credential;
 
-            const res = await fetch("http://localhost:5001/api/auth/google", {
+            const res = await fetch("https://cineaura-production.up.railway.app/api/auth/google", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
