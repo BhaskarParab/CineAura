@@ -3,7 +3,6 @@ import type { Request, Response } from "express";
 import { prisma } from "../db/db.config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import cookie from "cookie-parser";
 import { AuthRequest } from "../types";
 import { OAuth2Client } from "google-auth-library";
 
@@ -66,8 +65,8 @@ export const registerUser = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -120,8 +119,8 @@ export const loginUser = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -167,8 +166,8 @@ export const getMe = async (req: AuthRequest, res: Response) => {
 export const logoutUser = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
   });
 
   res.status(200).json({
@@ -249,8 +248,8 @@ export const googleAuth = async (req: Request, res: Response) => {
     // Set cookie (same config as your login)
     res.cookie("token", jwtToken, {
       // httpOnly: true,
-      secure: false, // true in production
-      sameSite: "lax",
+      secure: true, // true in production
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
