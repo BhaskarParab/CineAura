@@ -17,11 +17,16 @@ export const registerUser = async (req: Request, res: Response) => {
     });
   }
 
-  const isUser = await prisma.userData.findFirst({
-    where: {
-      OR: [{ username }, { email }],
-    },
-  });
+  const conditions: any[] = [];
+
+  if (username) conditions.push({ username });
+  if (email) conditions.push({ email });
+
+  const isUser = conditions.length
+    ? await prisma.userData.findFirst({
+        where: { OR: conditions },
+      })
+    : null;
 
   if (isUser) {
     if (isUser.username === username) {
@@ -247,7 +252,7 @@ export const googleAuth = async (req: Request, res: Response) => {
 
     // Set cookie (same config as your login)
     res.cookie("token", jwtToken, {
-      // httpOnly: true,
+      httpOnly: true,
       secure: true, // true in production
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
