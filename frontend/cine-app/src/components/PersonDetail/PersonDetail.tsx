@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { hideLoader, showLoader } from "../../Redux/LoaderSlice/LoaderSlice";
+import SEO from "../../SEOs/SEO";
 
 // Define the TypeScript interface for TMDB person data
 interface PersonDetails {
@@ -293,440 +294,451 @@ function PersonDetail() {
     ).length || 0;
 
   return (
-    <div className="bg-bg-primary text-text-primary mt-12 sm:mt-14 min-h-screen">
-      {/* Hero Section with Backdrop */}
-      <div className="relative">
-        {/* Backdrop Image Container */}
-        <div className="relative h-96 md:h-[500px] overflow-hidden">
-          {person.profile_path ? (
-            <div
-              className="absolute inset-0 bg-cover bg-center scale-105"
-              style={{
-                backgroundImage: `url(https://image.tmdb.org/t/p/original${person.profile_path})`,
-              }}
-            ></div>
-          ) : (
-            <div className="bg-bg-secondary flex h-full w-full items-center justify-center">
-              <span className="text-text-secondary">
-                No Profile Image Available
-              </span>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-linear-to-t from-black/70 from-10% to-transparent"></div>
-        </div>
-
-        {/* Person Title and Basic Info */}
-        <div className="relative container mx-auto px-4 -mt-20 md:-mt-22">
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Profile Image */}
-            <div className="md:w-1/3 lg:w-1/4">
-              <div className="rounded-xl overflow-hidden shadow-2xl transform transition-all duration-300">
-                {person.profile_path ? (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
-                    alt={person.name}
-                    className="w-full h-auto"
-                  />
-                ) : (
-                  <div className="bg-bg-secondary h-[450px] flex items-center justify-center">
-                    <span className="text-muted">No Image</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Person Info */}
-            <div className="md:w-2/2 lg:w-3/4 pb-6">
-              <h1 className="text-4xl md:text-5xl font-bold mb-2 text-text-primary sm:text-white">
-                {person.name}
-              </h1>
-
-              <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6">
-                <span>{person.known_for_department}</span>
-                <span>•</span>
-                <span>Born {formatDate(person.birthday)}</span>
-                <span>•</span>
-                <span>
-                  {person.deathday
-                    ? `Died ${formatDate(person.deathday)}`
-                    : `Age ${calculateAge(person.birthday, person.deathday)}`}
+    <>
+      <SEO
+        title={`${person.name} | CineAura`}
+        description={`Know about ${person.name}, their movies and biography`}
+        type="profile"
+      />
+      <div className="bg-bg-primary text-text-primary mt-12 sm:mt-14 min-h-screen">
+        {/* Hero Section with Backdrop */}
+        <div className="relative">
+          {/* Backdrop Image Container */}
+          <div className="relative h-96 md:h-[500px] overflow-hidden">
+            {person.profile_path ? (
+              <div
+                className="absolute inset-0 bg-cover bg-center scale-105"
+                style={{
+                  backgroundImage: `url(https://image.tmdb.org/t/p/original${person.profile_path})`,
+                }}
+              ></div>
+            ) : (
+              <div className="bg-bg-secondary flex h-full w-full items-center justify-center">
+                <span className="text-text-secondary">
+                  No Profile Image Available
                 </span>
-                {person.place_of_birth && (
-                  <>
-                    <span>•</span>
-                    <span>{person.place_of_birth}</span>
-                  </>
-                )}
               </div>
+            )}
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 from-10% to-transparent"></div>
+          </div>
 
-              {/* Biography */}
-              <div className="container mx-auto">
-                <div className="max-w-4xl">
-                  <h2 className="text-2xl font-bold mb-4 text-text-primary">
-                    Biography
-                  </h2>
-                  <p className="text-text-secondary leading-relaxed text-lg">
-                    {person.biography || "No biography available."}
-                  </p>
+          {/* Person Title and Basic Info */}
+          <div className="relative container mx-auto px-4 -mt-20 md:-mt-22">
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Profile Image */}
+              <div className="md:w-1/3 lg:w-1/4">
+                <div className="rounded-xl overflow-hidden shadow-2xl transform transition-all duration-300">
+                  {person.profile_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
+                      alt={person.name}
+                      className="w-full h-auto"
+                    />
+                  ) : (
+                    <div className="bg-bg-secondary h-[450px] flex items-center justify-center">
+                      <span className="text-muted">No Image</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Popularity and Basic Stats */}
-              <div className="flex flex-wrap gap-4 mt-4 mb-6">
-                <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
-                  <div className="flex items-center">
-                    <span className="text-3xl font-bold mr-1 text-yellow-400">
-                      {person.popularity.toFixed(1)}
+              {/* Person Info */}
+              <div className="md:w-2/2 lg:w-3/4 pb-6">
+                <h1 className="text-4xl md:text-5xl font-bold mb-2 text-text-primary sm:text-white">
+                  {person.name}
+                </h1>
+
+                <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6">
+                  <span>{person.known_for_department}</span>
+                  <span>•</span>
+                  <span>Born {formatDate(person.birthday)}</span>
+                  <span>•</span>
+                  <span>
+                    {person.deathday
+                      ? `Died ${formatDate(person.deathday)}`
+                      : `Age ${calculateAge(person.birthday, person.deathday)}`}
+                  </span>
+                  {person.place_of_birth && (
+                    <>
+                      <span>•</span>
+                      <span>{person.place_of_birth}</span>
+                    </>
+                  )}
+                </div>
+
+                {/* Biography */}
+                <div className="container mx-auto">
+                  <div className="max-w-4xl">
+                    <h2 className="text-2xl font-bold mb-4 text-text-primary">
+                      Biography
+                    </h2>
+                    <p className="text-text-secondary leading-relaxed text-lg">
+                      {person.biography || "No biography available."}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Popularity and Basic Stats */}
+                <div className="flex flex-wrap gap-4 mt-4 mb-6">
+                  <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
+                    <div className="flex items-center">
+                      <span className="text-3xl font-bold mr-1 text-yellow-400">
+                        {person.popularity.toFixed(1)}
+                      </span>
+                    </div>
+                    <span className="text-text-secondary text-sm">
+                      Popularity
                     </span>
                   </div>
-                  <span className="text-text-secondary text-sm">
-                    Popularity
-                  </span>
-                </div>
 
-                <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
-                  <span className="text-text-primary font-medium">
-                    {person.known_for_department}
-                  </span>
-                  <p className="text-text-secondary text-sm">Known for</p>
-                </div>
-
-                <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
-                  <span className="text-text-primary font-medium">
-                    {credits?.cast?.length || 0}
-                  </span>
-                  <p className="text-text-secondary text-sm">Total Credits</p>
-                </div>
-
-                <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
-                  <span className="text-text-primary font-medium">
-                    {movieCount}
-                  </span>
-                  <p className="text-text-secondary text-sm">Movies</p>
-                </div>
-
-                <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
-                  <span className="text-text-primary font-medium">
-                    {tvShowCount}
-                  </span>
-                  <p className="text-text-secondary text-sm">TV Shows</p>
-                </div>
-
-                {otherCount > 0 && (
                   <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
                     <span className="text-text-primary font-medium">
-                      {otherCount}
+                      {person.known_for_department}
                     </span>
-                    <p className="text-text-secondary text-sm">Other</p>
+                    <p className="text-text-secondary text-sm">Known for</p>
                   </div>
-                )}
 
-                {person.homepage && (
                   <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
-                    <a
-                      href={person.homepage}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent hover:underline"
-                    >
-                      Visit Website
-                    </a>
-                    <p className="text-text-secondary text-sm">Official Site</p>
+                    <span className="text-text-primary font-medium">
+                      {credits?.cast?.length || 0}
+                    </span>
+                    <p className="text-text-secondary text-sm">Total Credits</p>
                   </div>
-                )}
+
+                  <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
+                    <span className="text-text-primary font-medium">
+                      {movieCount}
+                    </span>
+                    <p className="text-text-secondary text-sm">Movies</p>
+                  </div>
+
+                  <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
+                    <span className="text-text-primary font-medium">
+                      {tvShowCount}
+                    </span>
+                    <p className="text-text-secondary text-sm">TV Shows</p>
+                  </div>
+
+                  {otherCount > 0 && (
+                    <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
+                      <span className="text-text-primary font-medium">
+                        {otherCount}
+                      </span>
+                      <p className="text-text-secondary text-sm">Other</p>
+                    </div>
+                  )}
+
+                  {person.homepage && (
+                    <div className="bg-bg-secondary bg-opacity-60 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center min-w-[100px]">
+                      <a
+                        href={person.homepage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent hover:underline"
+                      >
+                        Visit Website
+                      </a>
+                      <p className="text-text-secondary text-sm">
+                        Official Site
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Additional Details */}
-          <div className="lg:col-span-1">
-            {/* Also Known As */}
-            {person.also_known_as && person.also_known_as.length > 0 && (
-              <div className="bg-card rounded-xl p-6 mb-6 shadow-md border border-border">
+        {/* Main Content */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Additional Details */}
+            <div className="lg:col-span-1">
+              {/* Also Known As */}
+              {person.also_known_as && person.also_known_as.length > 0 && (
+                <div className="bg-card rounded-xl p-6 mb-6 shadow-md border border-border">
+                  <h3 className="text-lg font-semibold mb-4 text-text-primary">
+                    Also Known As
+                  </h3>
+                  <div className="space-y-3">
+                    {person.also_known_as.map((name, index) => (
+                      <div
+                        key={index}
+                        className="p-2 rounded-lg transition-colors"
+                      >
+                        <span className="text-text-primary">{name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Additional Info */}
+              <div className="bg-card rounded-xl p-6 shadow-md border border-border">
                 <h3 className="text-lg font-semibold mb-4 text-text-primary">
-                  Also Known As
+                  Additional Information
                 </h3>
                 <div className="space-y-3">
-                  {person.also_known_as.map((name, index) => (
-                    <div
-                      key={index}
-                      className="p-2 rounded-lg transition-colors"
-                    >
-                      <span className="text-text-primary">{name}</span>
+                  <div className="flex justify-between">
+                    <span className="text-text-secondary">Birthday</span>
+                    <span className="text-text-primary font-medium">
+                      {formatDate(person.birthday)}
+                    </span>
+                  </div>
+                  {person.deathday && (
+                    <div className="flex justify-between">
+                      <span className="text-text-secondary">Deathday</span>
+                      <span className="text-text-primary font-medium">
+                        {formatDate(person.deathday)}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Additional Info */}
-            <div className="bg-card rounded-xl p-6 shadow-md border border-border">
-              <h3 className="text-lg font-semibold mb-4 text-text-primary">
-                Additional Information
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">Birthday</span>
-                  <span className="text-text-primary font-medium">
-                    {formatDate(person.birthday)}
-                  </span>
-                </div>
-                {person.deathday && (
+                  )}
                   <div className="flex justify-between">
-                    <span className="text-text-secondary">Deathday</span>
+                    <span className="text-text-secondary">Age</span>
                     <span className="text-text-primary font-medium">
-                      {formatDate(person.deathday)}
+                      {calculateAge(person.birthday, person.deathday)}
                     </span>
                   </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">Age</span>
-                  <span className="text-text-primary font-medium">
-                    {calculateAge(person.birthday, person.deathday)}
-                  </span>
-                </div>
-                {person.place_of_birth && (
+                  {person.place_of_birth && (
+                    <div className="flex justify-between">
+                      <span className="text-text-secondary">
+                        Place of Birth
+                      </span>
+                      <span className="text-text-primary font-medium">
+                        {person.place_of_birth}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
-                    <span className="text-text-secondary">Place of Birth</span>
+                    <span className="text-text-secondary">Total Credits</span>
                     <span className="text-text-primary font-medium">
-                      {person.place_of_birth}
+                      {credits?.cast?.length || 0}
                     </span>
                   </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">Total Credits</span>
-                  <span className="text-text-primary font-medium">
-                    {credits?.cast?.length || 0}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">Movies</span>
-                  <span className="text-text-primary font-medium">
-                    {movieCount}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">TV Shows</span>
-                  <span className="text-text-primary font-medium">
-                    {tvShowCount}
-                  </span>
-                </div>
-                {otherCount > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-text-secondary">Other</span>
+                    <span className="text-text-secondary">Movies</span>
                     <span className="text-text-primary font-medium">
-                      {otherCount}
+                      {movieCount}
                     </span>
                   </div>
-                )}
+                  <div className="flex justify-between">
+                    <span className="text-text-secondary">TV Shows</span>
+                    <span className="text-text-primary font-medium">
+                      {tvShowCount}
+                    </span>
+                  </div>
+                  {otherCount > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-text-secondary">Other</span>
+                      <span className="text-text-primary font-medium">
+                        {otherCount}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Right Column - Content */}
-          <div className="lg:col-span-2">
-            {/* Movies Section */}
-            {movies.length > 0 && (
-              <div className="mb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold text-text-primary">
-                    Movies
-                  </h2>
-                  <div className="text-text-secondary text-sm">
-                    Showing{" "}
-                    {showAllMovies
-                      ? movies.length
-                      : Math.min(20, movies.length)}{" "}
-                    of {movieCount} movies
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {movies.map((movie) => (
-                    <div
-                      key={movie.id}
-                      onClick={() => handleMovieClick(movie)}
-                      className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transition-all transform"
-                    >
-                      {movie.poster_path ? (
-                        <img
-                          src={`https://image.tmdb.org/t/p/w185${movie.poster_path}`}
-                          alt={movie.title}
-                          className="w-full h-64 sm:h-72 object-cover"
-                        />
-                      ) : (
-                        <div className="bg-bg-secondary h-64 sm:h-72 flex items-center justify-center">
-                          <span className="text-muted text-sm">No Image</span>
-                        </div>
-                      )}
-                      <div className="p-3">
-                        <p className="font-semibold truncate text-text-primary">
-                          {movie.title}
-                        </p>
-                        <p className="text-text-secondary text-sm">
-                          {movie.release_date
-                            ? new Date(movie.release_date).getFullYear()
-                            : "N/A"}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Show More/Less Button */}
-                {hasMoreMovies && (
-                  <div className="mt-6 text-center">
-                    <button
-                      onClick={() => setShowAllMovies(!showAllMovies)}
-                      className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
-                    >
+            {/* Right Column - Content */}
+            <div className="lg:col-span-2">
+              {/* Movies Section */}
+              {movies.length > 0 && (
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold text-text-primary">
+                      Movies
+                    </h2>
+                    <div className="text-text-secondary text-sm">
+                      Showing{" "}
                       {showAllMovies
-                        ? "Show Less"
-                        : `Show All (${movieCount}) Movies`}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* TV Shows Section */}
-            {tvShows.length > 0 && (
-              <div className="mb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold text-text-primary">
-                    Web Series
-                  </h2>
-                  <div className="text-text-secondary text-sm">
-                    Showing{" "}
-                    {showAllTVShows
-                      ? tvShows.length
-                      : Math.min(20, tvShows.length)}{" "}
-                    of {tvShowCount} series
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {tvShows.map((show) => (
-                    <div
-                      key={show.id}
-                      onClick={() => handleTVShowClick(show)}
-                      className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transition-all transform"
-                    >
-                      {show.poster_path ? (
-                        <img
-                          src={`https://image.tmdb.org/t/p/w185${show.poster_path}`}
-                          alt={show.title}
-                          className="w-full h-64 sm:h-72 object-cover"
-                        />
-                      ) : (
-                        <div className="bg-bg-secondary h-64 sm:h-72 flex items-center justify-center">
-                          <span className="text-muted text-sm">No Image</span>
-                        </div>
-                      )}
-                      <div className="p-3">
-                        <p className="font-semibold truncate text-text-primary">
-                          {show.title}
-                        </p>
-                        <p className="text-text-secondary text-sm">
-                          {show.first_air_date
-                            ? new Date(show.first_air_date).getFullYear()
-                            : "N/A"}
-                        </p>
-                      </div>
+                        ? movies.length
+                        : Math.min(20, movies.length)}{" "}
+                      of {movieCount} movies
                     </div>
-                  ))}
-                </div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {movies.map((movie) => (
+                      <div
+                        key={movie.id}
+                        onClick={() => handleMovieClick(movie)}
+                        className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transition-all transform"
+                      >
+                        {movie.poster_path ? (
+                          <img
+                            src={`https://image.tmdb.org/t/p/w185${movie.poster_path}`}
+                            alt={movie.title}
+                            className="w-full h-64 sm:h-72 object-cover"
+                          />
+                        ) : (
+                          <div className="bg-bg-secondary h-64 sm:h-72 flex items-center justify-center">
+                            <span className="text-muted text-sm">No Image</span>
+                          </div>
+                        )}
+                        <div className="p-3">
+                          <p className="font-semibold truncate text-text-primary">
+                            {movie.title}
+                          </p>
+                          <p className="text-text-secondary text-sm">
+                            {movie.release_date
+                              ? new Date(movie.release_date).getFullYear()
+                              : "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
-                {/* Show More/Less Button */}
-                {hasMoreTVShows && (
-                  <div className="mt-6 text-center">
-                    <button
-                      onClick={() => setShowAllTVShows(!showAllTVShows)}
-                      className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
-                    >
+                  {/* Show More/Less Button */}
+                  {hasMoreMovies && (
+                    <div className="mt-6 text-center">
+                      <button
+                        onClick={() => setShowAllMovies(!showAllMovies)}
+                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
+                      >
+                        {showAllMovies
+                          ? "Show Less"
+                          : `Show All (${movieCount}) Movies`}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TV Shows Section */}
+              {tvShows.length > 0 && (
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold text-text-primary">
+                      Web Series
+                    </h2>
+                    <div className="text-text-secondary text-sm">
+                      Showing{" "}
                       {showAllTVShows
-                        ? "Show Less"
-                        : `Show All (${tvShowCount}) Series`}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Other Media Section */}
-            {others.length > 0 && (
-              <div className="mb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold text-text-primary">
-                    Other Works
-                  </h2>
-                  <div className="text-text-secondary text-sm">
-                    Showing{" "}
-                    {showAllOthers
-                      ? others.length
-                      : Math.min(20, others.length)}{" "}
-                    of {otherCount} other works
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {others.map((item) => (
-                    <div
-                      key={item.id}
-                      onClick={() => handleOtherClick(item)}
-                      className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transition-all transform"
-                    >
-                      {item.poster_path ? (
-                        <img
-                          src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}
-                          alt={item.title}
-                          className="w-full h-64 sm:h-72 object-cover"
-                        />
-                      ) : (
-                        <div className="bg-bg-secondary h-64 sm:h-72 flex items-center justify-center">
-                          <span className="text-muted text-sm">No Image</span>
-                        </div>
-                      )}
-                      <div className="p-3">
-                        <p className="font-semibold truncate text-text-primary">
-                          {item.title}
-                        </p>
-                        <p className="text-text-secondary text-sm">
-                          {item.media_type}
-                        </p>
-                        <p className="text-text-secondary text-sm">
-                          {item.release_date || item.first_air_date
-                            ? new Date(
-                                item.release_date || item.first_air_date!,
-                              ).getFullYear()
-                            : "N/A"}
-                        </p>
-                      </div>
+                        ? tvShows.length
+                        : Math.min(20, tvShows.length)}{" "}
+                      of {tvShowCount} series
                     </div>
-                  ))}
-                </div>
-
-                {/* Show More/Less Button */}
-                {hasMoreOthers && (
-                  <div className="mt-6 text-center">
-                    <button
-                      onClick={() => setShowAllOthers(!showAllOthers)}
-                      className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
-                    >
-                      {showAllOthers
-                        ? "Show Less"
-                        : `Show All (${otherCount}) Other Works`}
-                    </button>
                   </div>
-                )}
-              </div>
-            )}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {tvShows.map((show) => (
+                      <div
+                        key={show.id}
+                        onClick={() => handleTVShowClick(show)}
+                        className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transition-all transform"
+                      >
+                        {show.poster_path ? (
+                          <img
+                            src={`https://image.tmdb.org/t/p/w185${show.poster_path}`}
+                            alt={show.title}
+                            className="w-full h-64 sm:h-72 object-cover"
+                          />
+                        ) : (
+                          <div className="bg-bg-secondary h-64 sm:h-72 flex items-center justify-center">
+                            <span className="text-muted text-sm">No Image</span>
+                          </div>
+                        )}
+                        <div className="p-3">
+                          <p className="font-semibold truncate text-text-primary">
+                            {show.title}
+                          </p>
+                          <p className="text-text-secondary text-sm">
+                            {show.first_air_date
+                              ? new Date(show.first_air_date).getFullYear()
+                              : "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Show More/Less Button */}
+                  {hasMoreTVShows && (
+                    <div className="mt-6 text-center">
+                      <button
+                        onClick={() => setShowAllTVShows(!showAllTVShows)}
+                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
+                      >
+                        {showAllTVShows
+                          ? "Show Less"
+                          : `Show All (${tvShowCount}) Series`}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Other Media Section */}
+              {others.length > 0 && (
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold text-text-primary">
+                      Other Works
+                    </h2>
+                    <div className="text-text-secondary text-sm">
+                      Showing{" "}
+                      {showAllOthers
+                        ? others.length
+                        : Math.min(20, others.length)}{" "}
+                      of {otherCount} other works
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {others.map((item) => (
+                      <div
+                        key={item.id}
+                        onClick={() => handleOtherClick(item)}
+                        className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transition-all transform"
+                      >
+                        {item.poster_path ? (
+                          <img
+                            src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}
+                            alt={item.title}
+                            className="w-full h-64 sm:h-72 object-cover"
+                          />
+                        ) : (
+                          <div className="bg-bg-secondary h-64 sm:h-72 flex items-center justify-center">
+                            <span className="text-muted text-sm">No Image</span>
+                          </div>
+                        )}
+                        <div className="p-3">
+                          <p className="font-semibold truncate text-text-primary">
+                            {item.title}
+                          </p>
+                          <p className="text-text-secondary text-sm">
+                            {item.media_type}
+                          </p>
+                          <p className="text-text-secondary text-sm">
+                            {item.release_date || item.first_air_date
+                              ? new Date(
+                                  item.release_date || item.first_air_date!,
+                                ).getFullYear()
+                              : "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Show More/Less Button */}
+                  {hasMoreOthers && (
+                    <div className="mt-6 text-center">
+                      <button
+                        onClick={() => setShowAllOthers(!showAllOthers)}
+                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
+                      >
+                        {showAllOthers
+                          ? "Show Less"
+                          : `Show All (${otherCount}) Other Works`}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

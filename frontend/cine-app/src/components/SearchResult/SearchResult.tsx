@@ -11,6 +11,8 @@ import type {
   SearchMovie,
   SearchSeries,
 } from "../../types/SearchType";
+import SEO from "../../SEOs/SEO";
+import { ArrowUp } from "lucide-react";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -122,7 +124,7 @@ const mapMovieToTVGenres = (movieGenreIds: number[]): number[] => {
       const tvGenre = TV_GENRES.find(
         (tv) =>
           tv.name.toLowerCase().includes(movieGenre.name.toLowerCase()) ||
-          movieGenre.name.toLowerCase().includes(tv.name.toLowerCase())
+          movieGenre.name.toLowerCase().includes(tv.name.toLowerCase()),
       );
       if (tvGenre) {
         tvGenreIds.push(tvGenre.id);
@@ -206,7 +208,7 @@ function Pagination({
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="flex items-center gap-1 px-3 py-2 rounded-lg bg-bg-tertiary text-text-primary text-sm font-medium
-                     hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                     hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           <svg
             className="w-4 h-4"
@@ -236,7 +238,7 @@ function Pagination({
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors cursor-pointer
+              className={`w-10 h-10 rounded-lg text-sm font-medium cursor-pointer
                 ${
                   currentPage === page
                     ? "bg-blue-600 text-white"
@@ -245,14 +247,14 @@ function Pagination({
             >
               {page}
             </button>
-          )
+          ),
         )}
 
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           className="flex items-center gap-1 px-3 py-2 rounded-lg bg-bg-tertiary text-text-primary text-sm font-medium
-                     hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                     hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           <span className="hidden sm:inline">Next</span>
           <svg
@@ -284,7 +286,7 @@ function MovieCard({ movie, onClick }: MovieCardProps) {
   return (
     <div
       onClick={() => onClick(movie)}
-      className="bg-bg-secondary rounded-lg overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-200"
+      className="bg-bg-secondary rounded-lg overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
     >
       <div className="relative w-full pt-[150%]">
         {movie.poster_path ? (
@@ -326,7 +328,7 @@ function SeriesCard({ series, onClick }: SeriesCardProps) {
   return (
     <div
       onClick={() => onClick(series)}
-      className="bg-bg-secondary rounded-lg overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-200"
+      className="bg-bg-secondary rounded-lg overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
     >
       <div className="relative w-full pt-[150%]">
         {series.poster_path ? (
@@ -384,8 +386,10 @@ function SearchResult() {
   const [discoverSeriesPage, setDiscoverSeriesPage] = useState(1);
   const [discoverMoviesTotalPages, setDiscoverMoviesTotalPages] = useState(0);
   const [discoverSeriesTotalPages, setDiscoverSeriesTotalPages] = useState(0);
-  const [discoverMoviesTotalResults, setDiscoverMoviesTotalResults] = useState(0);
-  const [discoverSeriesTotalResults, setDiscoverSeriesTotalResults] = useState(0);
+  const [discoverMoviesTotalResults, setDiscoverMoviesTotalResults] =
+    useState(0);
+  const [discoverSeriesTotalResults, setDiscoverSeriesTotalResults] =
+    useState(0);
   const [showDiscover, setShowDiscover] = useState<boolean>(false);
 
   // Search state with API pagination
@@ -407,8 +411,12 @@ function SearchResult() {
   const [filteredSeriesPage, setFilteredSeriesPage] = useState(1);
   const [filteredMoviesTotalPages, setFilteredMoviesTotalPages] = useState(0);
   const [filteredSeriesTotalPages, setFilteredSeriesTotalPages] = useState(0);
-  const [filteredMoviesTotalResults, setFilteredMoviesTotalResults] = useState(0);
-  const [filteredSeriesTotalResults, setFilteredSeriesTotalResults] = useState(0);
+  const [filteredMoviesTotalResults, setFilteredMoviesTotalResults] =
+    useState(0);
+  const [filteredSeriesTotalResults, setFilteredSeriesTotalResults] =
+    useState(0);
+
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // Current filter params for pagination
   const [currentFilterParams, setCurrentFilterParams] = useState<{
@@ -424,119 +432,140 @@ function SearchResult() {
 
   // ===================== API FETCH FUNCTIONS =====================
 
-  const fetchDiscoverMovies = useCallback(async (page: number) => {
-    try {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&page=${page}`
-      );
-      const data = await res.json();
-      setDiscoverMovies(data.results || []);
-      setDiscoverMoviesTotalPages(Math.min(data.total_pages || 0, 500));
-      setDiscoverMoviesTotalResults(data.total_results || 0);
-    } catch (err) {
-      console.error("Discover movies error:", err);
-    }
-  }, [apiKey]);
-
-  const fetchDiscoverSeries = useCallback(async (page: number) => {
-    try {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/tv/popular?api_key=${apiKey}&page=${page}`
-      );
-      const data = await res.json();
-      setDiscoverSeries(data.results || []);
-      setDiscoverSeriesTotalPages(Math.min(data.total_pages || 0, 500));
-      setDiscoverSeriesTotalResults(data.total_results || 0);
-    } catch (err) {
-      console.error("Discover series error:", err);
-    }
-  }, [apiKey]);
-
-  const fetchSearchMovies = useCallback(async (query: string, page: number) => {
-    try {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}&include_adult=false&page=${page}`
-      );
-      const data = await res.json();
-      setSearchMovies(data.results || []);
-      setSearchMoviesTotalPages(Math.min(data.total_pages || 0, 500));
-      setSearchMoviesTotalResults(data.total_results || 0);
-    } catch (err) {
-      console.error("Search movies error:", err);
-    }
-  }, [apiKey]);
-
-  const fetchSearchSeries = useCallback(async (query: string, page: number) => {
-    try {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/search/tv?api_key=${apiKey}&query=${query}&include_adult=false&page=${page}`
-      );
-      const data = await res.json();
-      setSearchSeries(data.results || []);
-      setSearchSeriesTotalPages(Math.min(data.total_pages || 0, 500));
-      setSearchSeriesTotalResults(data.total_results || 0);
-    } catch (err) {
-      console.error("Search series error:", err);
-    }
-  }, [apiKey]);
-
-  const fetchSearchPersons = useCallback(async (query: string) => {
-    try {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${query}&include_adult=false`
-      );
-      const data = await res.json();
-      setSearchPersons(data.results || []);
-    } catch (err) {
-      console.error("Search persons error:", err);
-    }
-  }, [apiKey]);
-
-  const fetchFilteredMovies = useCallback(async (
-    genres: number[],
-    countries: string[],
-    fromYear: number,
-    toYear: number,
-    page: number
-  ) => {
-    try {
-      let url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genres.join(",")}&primary_release_date.gte=${fromYear}-01-01&primary_release_date.lte=${toYear}-12-31&page=${page}`;
-      if (countries.length > 0) {
-        url += `&with_origin_country=${countries.join(",")}`;
+  const fetchDiscoverMovies = useCallback(
+    async (page: number) => {
+      try {
+        const res = await fetch(
+          `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&page=${page}`,
+        );
+        const data = await res.json();
+        setDiscoverMovies(data.results || []);
+        setDiscoverMoviesTotalPages(Math.min(data.total_pages || 0, 500));
+        setDiscoverMoviesTotalResults(data.total_results || 0);
+      } catch (err) {
+        console.error("Discover movies error:", err);
       }
-      const res = await fetch(url);
-      const data = await res.json();
-      setFilteredMoviesLocal(data.results || []);
-      setFilteredMoviesTotalPages(Math.min(data.total_pages || 0, 500));
-      setFilteredMoviesTotalResults(data.total_results || 0);
-      dispatch(setFilteredMovies(data.results || []));
-    } catch (err) {
-      console.error("Filter movies error:", err);
-    }
-  }, [apiKey, dispatch]);
+    },
+    [apiKey],
+  );
 
-  const fetchFilteredSeries = useCallback(async (
-    tvGenreIds: number[],
-    countries: string[],
-    fromYear: number,
-    toYear: number,
-    page: number
-  ) => {
-    try {
-      let url = `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&with_genres=${tvGenreIds.join(",")}&first_air_date.gte=${fromYear}-01-01&first_air_date.lte=${toYear}-12-31&page=${page}`;
-      if (countries.length > 0) {
-        url += `&with_origin_country=${countries.join(",")}`;
+  const fetchDiscoverSeries = useCallback(
+    async (page: number) => {
+      try {
+        const res = await fetch(
+          `https://api.themoviedb.org/3/tv/popular?api_key=${apiKey}&page=${page}`,
+        );
+        const data = await res.json();
+        setDiscoverSeries(data.results || []);
+        setDiscoverSeriesTotalPages(Math.min(data.total_pages || 0, 500));
+        setDiscoverSeriesTotalResults(data.total_results || 0);
+      } catch (err) {
+        console.error("Discover series error:", err);
       }
-      const res = await fetch(url);
-      const data = await res.json();
-      setFilteredSeriesLocal(data.results || []);
-      setFilteredSeriesTotalPages(Math.min(data.total_pages || 0, 500));
-      setFilteredSeriesTotalResults(data.total_results || 0);
-      dispatch(setFilteredSeries(data.results || []));
-    } catch (err) {
-      console.error("Filter series error:", err);
-    }
-  }, [apiKey, dispatch]);
+    },
+    [apiKey],
+  );
+
+  const fetchSearchMovies = useCallback(
+    async (query: string, page: number) => {
+      try {
+        const res = await fetch(
+          `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}&include_adult=false&page=${page}`,
+        );
+        const data = await res.json();
+        setSearchMovies(data.results || []);
+        setSearchMoviesTotalPages(Math.min(data.total_pages || 0, 500));
+        setSearchMoviesTotalResults(data.total_results || 0);
+      } catch (err) {
+        console.error("Search movies error:", err);
+      }
+    },
+    [apiKey],
+  );
+
+  const fetchSearchSeries = useCallback(
+    async (query: string, page: number) => {
+      try {
+        const res = await fetch(
+          `https://api.themoviedb.org/3/search/tv?api_key=${apiKey}&query=${query}&include_adult=false&page=${page}`,
+        );
+        const data = await res.json();
+        setSearchSeries(data.results || []);
+        setSearchSeriesTotalPages(Math.min(data.total_pages || 0, 500));
+        setSearchSeriesTotalResults(data.total_results || 0);
+      } catch (err) {
+        console.error("Search series error:", err);
+      }
+    },
+    [apiKey],
+  );
+
+  const fetchSearchPersons = useCallback(
+    async (query: string) => {
+      try {
+        const res = await fetch(
+          `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${query}&include_adult=false`,
+        );
+        const data = await res.json();
+        setSearchPersons(data.results || []);
+      } catch (err) {
+        console.error("Search persons error:", err);
+      }
+    },
+    [apiKey],
+  );
+
+  const fetchFilteredMovies = useCallback(
+    async (
+      genres: number[],
+      countries: string[],
+      fromYear: number,
+      toYear: number,
+      page: number,
+    ) => {
+      try {
+        let url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genres.join(",")}&primary_release_date.gte=${fromYear}-01-01&primary_release_date.lte=${toYear}-12-31&page=${page}`;
+        if (countries.length > 0) {
+          url += `&with_origin_country=${countries.join(",")}`;
+        }
+        const res = await fetch(url);
+        const data = await res.json();
+        setFilteredMoviesLocal(data.results || []);
+        setFilteredMoviesTotalPages(Math.min(data.total_pages || 0, 500));
+        setFilteredMoviesTotalResults(data.total_results || 0);
+        dispatch(setFilteredMovies(data.results || []));
+      } catch (err) {
+        console.error("Filter movies error:", err);
+      }
+    },
+    [apiKey, dispatch],
+  );
+
+  const fetchFilteredSeries = useCallback(
+    async (
+      tvGenreIds: number[],
+      countries: string[],
+      fromYear: number,
+      toYear: number,
+      page: number,
+    ) => {
+      try {
+        let url = `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&with_genres=${tvGenreIds.join(",")}&first_air_date.gte=${fromYear}-01-01&first_air_date.lte=${toYear}-12-31&page=${page}`;
+        if (countries.length > 0) {
+          url += `&with_origin_country=${countries.join(",")}`;
+        }
+        const res = await fetch(url);
+        const data = await res.json();
+        setFilteredSeriesLocal(data.results || []);
+        setFilteredSeriesTotalPages(Math.min(data.total_pages || 0, 500));
+        setFilteredSeriesTotalResults(data.total_results || 0);
+        dispatch(setFilteredSeries(data.results || []));
+      } catch (err) {
+        console.error("Filter series error:", err);
+      }
+    },
+    [apiKey, dispatch],
+  );
 
   // ===================== EFFECTS =====================
 
@@ -551,10 +580,7 @@ function SearchResult() {
       const fetchDiscover = async () => {
         dispatch(showLoader());
         try {
-          await Promise.all([
-            fetchDiscoverMovies(1),
-            fetchDiscoverSeries(1),
-          ]);
+          await Promise.all([fetchDiscoverMovies(1), fetchDiscoverSeries(1)]);
         } finally {
           dispatch(hideLoader());
         }
@@ -564,7 +590,20 @@ function SearchResult() {
     } else {
       setShowDiscover(false);
     }
-  }, [slug, filtersAreActive, fetchDiscoverMovies, fetchDiscoverSeries, dispatch]);
+  }, [
+    slug,
+    filtersAreActive,
+    fetchDiscoverMovies,
+    fetchDiscoverSeries,
+    dispatch,
+  ]);
+
+  // Scroll to top listener
+  useEffect(() => {
+    const handleScroll = () => setShowScrollBtn(window.scrollY > 600);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Discover movies page change
   useEffect(() => {
@@ -614,7 +653,13 @@ function SearchResult() {
       setHasSearchResults(false);
       setFilteredMoviesPage(1);
       setFilteredSeriesPage(1);
-      setCurrentFilterParams({ genres, tvGenreIds, countries, fromYear, toYear });
+      setCurrentFilterParams({
+        genres,
+        tvGenreIds,
+        countries,
+        fromYear,
+        toYear,
+      });
 
       dispatch(showLoader());
       Promise.all([
@@ -634,7 +679,13 @@ function SearchResult() {
         setCurrentFilterParams(null);
       }
     }
-  }, [location.search, filtersAreActive, fetchFilteredMovies, fetchFilteredSeries, dispatch]);
+  }, [
+    location.search,
+    filtersAreActive,
+    fetchFilteredMovies,
+    fetchFilteredSeries,
+    dispatch,
+  ]);
 
   // Search
   useEffect(() => {
@@ -668,7 +719,15 @@ function SearchResult() {
     ]).finally(() => {
       dispatch(hideLoader());
     });
-  }, [slug, searchTrigger, dispatch, fetchSearchMovies, fetchSearchSeries, fetchSearchPersons, filtersAreActive]);
+  }, [
+    slug,
+    searchTrigger,
+    dispatch,
+    fetchSearchMovies,
+    fetchSearchSeries,
+    fetchSearchPersons,
+    filtersAreActive,
+  ]);
 
   // Search movies page change
   useEffect(() => {
@@ -699,12 +758,18 @@ function SearchResult() {
         currentFilterParams.countries,
         currentFilterParams.fromYear,
         currentFilterParams.toYear,
-        filteredMoviesPage
+        filteredMoviesPage,
       ).finally(() => {
         dispatch(hideLoader());
       });
     }
-  }, [filteredMoviesPage, filtersAreActive, currentFilterParams, fetchFilteredMovies, dispatch]);
+  }, [
+    filteredMoviesPage,
+    filtersAreActive,
+    currentFilterParams,
+    fetchFilteredMovies,
+    dispatch,
+  ]);
 
   // Filtered series page change
   useEffect(() => {
@@ -715,12 +780,18 @@ function SearchResult() {
         currentFilterParams.countries,
         currentFilterParams.fromYear,
         currentFilterParams.toYear,
-        filteredSeriesPage
+        filteredSeriesPage,
       ).finally(() => {
         dispatch(hideLoader());
       });
     }
-  }, [filteredSeriesPage, filtersAreActive, currentFilterParams, fetchFilteredSeries, dispatch]);
+  }, [
+    filteredSeriesPage,
+    filtersAreActive,
+    currentFilterParams,
+    fetchFilteredSeries,
+    dispatch,
+  ]);
 
   // ===================== HANDLERS =====================
 
@@ -729,13 +800,13 @@ function SearchResult() {
       setGenreError(false);
     }
     setSelectedGenres((prev) =>
-      prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id],
     );
   };
 
   const toggleCountry = (iso: string) => {
     setSelectedCountries((prev) =>
-      prev.includes(iso) ? prev.filter((c) => c !== iso) : [...prev, iso]
+      prev.includes(iso) ? prev.filter((c) => c !== iso) : [...prev, iso],
     );
   };
 
@@ -811,19 +882,19 @@ function SearchResult() {
 
   const handleMovieClick = (movie: SearchMovie) => {
     navigate(
-      `/movie/${movie.id}/${movie.title.toLowerCase().replace(/\s+/g, "-")}`
+      `/movie/${movie.id}/${movie.title.toLowerCase().replace(/\s+/g, "-")}`,
     );
   };
 
   const handleSeriesClick = (series: SearchSeries) => {
     navigate(
-      `/tv/${series.id}/${series.name.toLowerCase().replace(/\s+/g, "-")}`
+      `/tv/${series.id}/${series.name.toLowerCase().replace(/\s+/g, "-")}`,
     );
   };
 
   const handlePersonClick = (person: PersonResult) => {
     navigate(
-      `/person/${person.id}/${person.name.toLowerCase().replace(/\s+/g, "-")}`
+      `/person/${person.id}/${person.name.toLowerCase().replace(/\s+/g, "-")}`,
     );
   };
 
@@ -837,354 +908,395 @@ function SearchResult() {
     </div>
   );
 
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
   return (
-    <div className="min-h-screen mt-22 sm:mt-20 md:mt-16 bg-bg-primary text-text-primary p-4 md:p-8">
-      {/* FILTER FORM */}
-      <form className="container mx-auto" onSubmit={handleFilterSubmit}>
-        <div className="bg-bg-secondary shadow-sm p-4 rounded-lg">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">Filter</h1>
-            <button
-              type="button"
-              className="md:hidden cursor-pointer flex items-center justify-self-center w-8 h-8 p-2 bg-bg-tertiary rounded-full"
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-            >
-              <svg
-                className={`w-5 h-5 transform transition-transform ${
-                  isFilterOpen ? "rotate-180" : ""
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-          </div>
-          <div className={`${!isFilterOpen && "hidden md:block"}`}>
-            <h1 className="text-lg font-semibold mt-6">Genre</h1>
-
-            <div className="flex flex-wrap gap-5 mt-4">
-              {MOVIE_GENRES.map((g) => (
-                <label
-                  key={g.id}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedGenres.includes(g.id)}
-                    onChange={() => toggleGenre(g.id)}
-                    className="cursor-pointer"
-                  />
-                  <span>{g.name}</span>
-                </label>
-              ))}
-            </div>
-
-            {genreError && (
-              <p className="text-red-500 text-sm mt-2">
-                Please select at least one genre.
-              </p>
-            )}
-
-            <h1 className="text-lg font-semibold mt-6">Country (Optional)</h1>
-            <div className="flex flex-wrap gap-5 mt-4">
-              {COUNTRIES.map((country) => (
-                <label
-                  key={country.iso_3166_1}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedCountries.includes(country.iso_3166_1)}
-                    onChange={() => toggleCountry(country.iso_3166_1)}
-                    className="cursor-pointer"
-                  />
-                  <span>{country.english_name}</span>
-                </label>
-              ))}
-            </div>
-
-            <h1 className="text-lg font-semibold mt-6">Release Year</h1>
-            <div className="flex gap-4 mt-4 items-center">
-              <select
-                className="p-2 rounded cursor-pointer bg-bg-tertiary focus:outline-none font-medium hide-scrollbar"
-                value={yearFrom}
-                onChange={(e) => setYearFrom(Number(e.target.value))}
-              >
-                {Array.from(
-                  { length: maxYear - minYear + 1 },
-                  (_, i) => maxYear - i
-                ).map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-
-              <span>to</span>
-
-              <select
-                className="p-2 rounded bg-bg-tertiary cursor-pointer focus:outline-none font-medium hide-scrollbar"
-                value={yearTo}
-                onChange={(e) => setYearTo(Number(e.target.value))}
-              >
-                {Array.from(
-                  { length: maxYear - minYear + 1 },
-                  (_, i) => maxYear - i
-                ).map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex gap-4 mt-10">
+    <>
+      <SEO
+        title="Search Results | CineAura"
+        description="Search movies, TV shows, and people on CineAura."
+      />
+      <div className="min-h-screen mt-22 sm:mt-20 md:mt-16 bg-bg-primary text-text-primary p-4 md:p-8">
+        {/* FILTER FORM */}
+        <form className="container mx-auto" onSubmit={handleFilterSubmit}>
+          <div className="bg-bg-secondary shadow-sm p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold">Filter</h1>
               <button
-                type="submit"
-                className="p-2 w-35 bg-bg-tertiary rounded-lg font-medium cursor-pointer hover:bg-bg-secondary"
+                type="button"
+                className="md:hidden cursor-pointer flex items-center justify-self-center w-8 h-8 p-2 bg-bg-tertiary rounded-full"
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
               >
-                Apply Filters
-              </button>
-              {filtersAreActive && (
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  className="p-2 w-35 bg-red-600 text-white rounded-lg font-medium cursor-pointer hover:bg-red-700"
+                <svg
+                  className={`w-5 h-5 transform transition-transform ${
+                    isFilterOpen ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  Reset Filters
-                </button>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className={`${!isFilterOpen && "hidden md:block"}`}>
+              <h1 className="text-lg font-semibold mt-6">Genre</h1>
+
+              <div className="flex flex-wrap gap-5 mt-4">
+                {MOVIE_GENRES.map((g) => (
+                  <label
+                    key={g.id}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedGenres.includes(g.id)}
+                      onChange={() => toggleGenre(g.id)}
+                      className="cursor-pointer"
+                    />
+                    <span>{g.name}</span>
+                  </label>
+                ))}
+              </div>
+
+              {genreError && (
+                <p className="text-red-500 text-sm mt-2">
+                  Please select at least one genre.
+                </p>
               )}
+
+              <h1 className="text-lg font-semibold mt-6">Country (Optional)</h1>
+              <div className="flex flex-wrap gap-5 mt-4">
+                {COUNTRIES.map((country) => (
+                  <label
+                    key={country.iso_3166_1}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedCountries.includes(country.iso_3166_1)}
+                      onChange={() => toggleCountry(country.iso_3166_1)}
+                      className="cursor-pointer"
+                    />
+                    <span>{country.english_name}</span>
+                  </label>
+                ))}
+              </div>
+
+              <h1 className="text-lg font-semibold mt-6">Release Year</h1>
+              <div className="flex gap-4 mt-4 items-center">
+                <select
+                  className="p-2 rounded cursor-pointer bg-bg-tertiary focus:outline-none font-medium hide-scrollbar"
+                  value={yearFrom}
+                  onChange={(e) => setYearFrom(Number(e.target.value))}
+                >
+                  {Array.from(
+                    { length: maxYear - minYear + 1 },
+                    (_, i) => maxYear - i,
+                  ).map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+
+                <span>to</span>
+
+                <select
+                  className="p-2 rounded bg-bg-tertiary cursor-pointer focus:outline-none font-medium hide-scrollbar"
+                  value={yearTo}
+                  onChange={(e) => setYearTo(Number(e.target.value))}
+                >
+                  {Array.from(
+                    { length: maxYear - minYear + 1 },
+                    (_, i) => maxYear - i,
+                  ).map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex gap-4 mt-10">
+                <button
+                  type="submit"
+                  className="p-2 w-35 bg-bg-tertiary rounded-lg font-medium cursor-pointer hover:bg-bg-secondary"
+                >
+                  Apply Filters
+                </button>
+                {filtersAreActive && (
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    className="p-2 w-35 bg-red-600 text-white rounded-lg font-medium cursor-pointer hover:bg-red-700"
+                  >
+                    Reset Filters
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
 
-      {/* SEARCH RESULTS OR DISCOVER CONTENT — ONLY SHOW IF FILTERS NOT APPLIED */}
-      {!filtersAreActive && (
-        <div className="container mx-auto mt-12">
-          {hasSearchResults ? (
-            <>
-              {/* SEARCH MOVIES WITH PAGINATION */}
-              {searchMovies.length > 0 && (
-                <section id="search-movies-section">
-                  <ResultsInfo total={searchMoviesTotalResults} label="Movies" />
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                    {searchMovies.map((movie) => (
-                      <MovieCard
-                        key={movie.id}
-                        movie={movie}
-                        onClick={handleMovieClick}
-                      />
-                    ))}
-                  </div>
-                  <Pagination
-                    currentPage={searchMoviesPage}
-                    totalPages={searchMoviesTotalPages}
-                    onPageChange={setSearchMoviesPage}
-                    sectionId="search-movies-section"
-                  />
-                </section>
-              )}
-
-              {/* SEARCH SERIES WITH PAGINATION */}
-              {searchSeries.length > 0 && (
-                <section className="mt-12" id="search-series-section">
-                  <ResultsInfo total={searchSeriesTotalResults} label="Series" />
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                    {searchSeries.map((show) => (
-                      <SeriesCard
-                        key={show.id}
-                        series={show}
-                        onClick={handleSeriesClick}
-                      />
-                    ))}
-                  </div>
-                  <Pagination
-                    currentPage={searchSeriesPage}
-                    totalPages={searchSeriesTotalPages}
-                    onPageChange={setSearchSeriesPage}
-                    sectionId="search-series-section"
-                  />
-                </section>
-              )}
-
-              {/* PERSON */}
-              {searchPersons.length > 0 && (
-                <section className="mt-12">
-                  <h2 className="text-3xl font-bold mb-6">People</h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                    {searchPersons.map((p) => (
-                      <div
-                        key={p.id}
-                        onClick={() => handlePersonClick(p)}
-                        className="bg-bg-secondary rounded-lg overflow-hidden text-center cursor-pointer hover:scale-[1.02] transition-transform duration-200"
-                      >
-                        <div className="relative w-full pt-[125%]">
-                          {p.profile_path ? (
-                            <img
-                              src={`${IMAGE_BASE_URL}${p.profile_path}`}
-                              alt={p.name}
-                              className="absolute inset-0 w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <div className="absolute inset-0 bg-bg-tertiary flex items-center justify-center">
-                              <svg
-                                className="w-16 h-16 text-gray-500"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-semibold truncate">{p.name}</h3>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* No search results at all */}
-              {searchMovies.length === 0 && searchSeries.length === 0 && searchPersons.length === 0 && (
-                <div className="mt-50 text-center">
-                  <h2 className="text-2xl font-bold text-text-secondary">
-                    No results found for "{slug}"
-                  </h2>
-                  <p className="mt-4 text-text-secondary">
-                    Try searching for something else.
-                  </p>
-                </div>
-              )}
-            </>
-          ) : showDiscover ? (
-            <>
-              {/* DISCOVER POPULAR MOVIES WITH PAGINATION */}
-              {discoverMovies.length > 0 && (
-                <section id="discover-movies-section">
-                  <ResultsInfo total={discoverMoviesTotalResults} label="Popular Movies" />
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                    {discoverMovies.map((movie) => (
-                      <MovieCard
-                        key={movie.id}
-                        movie={movie}
-                        onClick={handleMovieClick}
-                      />
-                    ))}
-                  </div>
-                  <Pagination
-                    currentPage={discoverMoviesPage}
-                    totalPages={discoverMoviesTotalPages}
-                    onPageChange={setDiscoverMoviesPage}
-                    sectionId="discover-movies-section"
-                  />
-                </section>
-              )}
-
-              {/* DISCOVER POPULAR SERIES WITH PAGINATION */}
-              {discoverSeries.length > 0 && (
-                <section className="mt-12" id="discover-series-section">
-                  <ResultsInfo total={discoverSeriesTotalResults} label="Popular Series" />
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                    {discoverSeries.map((show) => (
-                      <SeriesCard
-                        key={show.id}
-                        series={show}
-                        onClick={handleSeriesClick}
-                      />
-                    ))}
-                  </div>
-                  <Pagination
-                    currentPage={discoverSeriesPage}
-                    totalPages={discoverSeriesTotalPages}
-                    onPageChange={setDiscoverSeriesPage}
-                    sectionId="discover-series-section"
-                  />
-                </section>
-              )}
-            </>
-          ) : null}
-        </div>
-      )}
-
-      {/* FILTER RESULTS WITH PAGINATION — ONLY SHOW IF FILTERS APPLIED */}
-      {filtersAreActive &&
-        (filteredMovies.length > 0 || filteredSeries.length > 0) && (
+        {/* SEARCH RESULTS OR DISCOVER CONTENT — ONLY SHOW IF FILTERS NOT APPLIED */}
+        {!filtersAreActive && (
           <div className="container mx-auto mt-12">
-            {filteredMovies.length > 0 && (
-              <section id="filtered-movies-section">
-                <ResultsInfo total={filteredMoviesTotalResults} label="Movies" />
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                  {filteredMovies.map((movie) => (
-                    <MovieCard
-                      key={movie.id}
-                      movie={movie}
-                      onClick={handleMovieClick}
+            {hasSearchResults ? (
+              <>
+                {/* SEARCH MOVIES WITH PAGINATION */}
+                {searchMovies.length > 0 && (
+                  <section id="search-movies-section">
+                    <ResultsInfo
+                      total={searchMoviesTotalResults}
+                      label="Movies"
                     />
-                  ))}
-                </div>
-                <Pagination
-                  currentPage={filteredMoviesPage}
-                  totalPages={filteredMoviesTotalPages}
-                  onPageChange={setFilteredMoviesPage}
-                  sectionId="filtered-movies-section"
-                />
-              </section>
-            )}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                      {searchMovies.map((movie) => (
+                        <MovieCard
+                          key={movie.id}
+                          movie={movie}
+                          onClick={handleMovieClick}
+                        />
+                      ))}
+                    </div>
+                    <Pagination
+                      currentPage={searchMoviesPage}
+                      totalPages={searchMoviesTotalPages}
+                      onPageChange={setSearchMoviesPage}
+                      sectionId="search-movies-section"
+                    />
+                  </section>
+                )}
 
-            {filteredSeries.length > 0 && (
-              <section className="mt-12" id="filtered-series-section">
-                <ResultsInfo total={filteredSeriesTotalResults} label="Series" />
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                  {filteredSeries.map((show) => (
-                    <SeriesCard
-                      key={show.id}
-                      series={show}
-                      onClick={handleSeriesClick}
+                {/* SEARCH SERIES WITH PAGINATION */}
+                {searchSeries.length > 0 && (
+                  <section className="mt-12" id="search-series-section">
+                    <ResultsInfo
+                      total={searchSeriesTotalResults}
+                      label="Series"
                     />
-                  ))}
-                </div>
-                <Pagination
-                  currentPage={filteredSeriesPage}
-                  totalPages={filteredSeriesTotalPages}
-                  onPageChange={setFilteredSeriesPage}
-                  sectionId="filtered-series-section"
-                />
-              </section>
-            )}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                      {searchSeries.map((show) => (
+                        <SeriesCard
+                          key={show.id}
+                          series={show}
+                          onClick={handleSeriesClick}
+                        />
+                      ))}
+                    </div>
+                    <Pagination
+                      currentPage={searchSeriesPage}
+                      totalPages={searchSeriesTotalPages}
+                      onPageChange={setSearchSeriesPage}
+                      sectionId="search-series-section"
+                    />
+                  </section>
+                )}
+
+                {/* PERSON */}
+                {searchPersons.length > 0 && (
+                  <section className="mt-12">
+                    <h2 className="text-3xl font-bold mb-6">People</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                      {searchPersons.map((p) => (
+                        <div
+                          key={p.id}
+                          onClick={() => handlePersonClick(p)}
+                          className="bg-bg-secondary rounded-lg overflow-hidden text-center cursor-pointer hover:scale-[1.02] transition-transform"
+                        >
+                          <div className="relative w-full pt-[125%]">
+                            {p.profile_path ? (
+                              <img
+                                src={`${IMAGE_BASE_URL}${p.profile_path}`}
+                                alt={p.name}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="absolute inset-0 bg-bg-tertiary flex items-center justify-center">
+                                <svg
+                                  className="w-16 h-16 text-gray-500"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-4">
+                            <h3 className="font-semibold truncate">{p.name}</h3>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* No search results at all */}
+                {searchMovies.length === 0 &&
+                  searchSeries.length === 0 &&
+                  searchPersons.length === 0 && (
+                    <div className="mt-50 text-center">
+                      <h2 className="text-2xl font-bold text-text-secondary">
+                        No results found for "{slug}"
+                      </h2>
+                      <p className="mt-4 text-text-secondary">
+                        Try searching for something else.
+                      </p>
+                    </div>
+                  )}
+              </>
+            ) : showDiscover ? (
+              <>
+                {/* DISCOVER POPULAR MOVIES WITH PAGINATION */}
+                {discoverMovies.length > 0 && (
+                  <section id="discover-movies-section">
+                    <ResultsInfo
+                      total={discoverMoviesTotalResults}
+                      label="Popular Movies"
+                    />
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                      {discoverMovies.map((movie) => (
+                        <MovieCard
+                          key={movie.id}
+                          movie={movie}
+                          onClick={handleMovieClick}
+                        />
+                      ))}
+                    </div>
+                    <Pagination
+                      currentPage={discoverMoviesPage}
+                      totalPages={discoverMoviesTotalPages}
+                      onPageChange={setDiscoverMoviesPage}
+                      sectionId="discover-movies-section"
+                    />
+                  </section>
+                )}
+
+                {/* DISCOVER POPULAR SERIES WITH PAGINATION */}
+                {discoverSeries.length > 0 && (
+                  <section className="mt-12" id="discover-series-section">
+                    <ResultsInfo
+                      total={discoverSeriesTotalResults}
+                      label="Popular Series"
+                    />
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                      {discoverSeries.map((show) => (
+                        <SeriesCard
+                          key={show.id}
+                          series={show}
+                          onClick={handleSeriesClick}
+                        />
+                      ))}
+                    </div>
+                    <Pagination
+                      currentPage={discoverSeriesPage}
+                      totalPages={discoverSeriesTotalPages}
+                      onPageChange={setDiscoverSeriesPage}
+                      sectionId="discover-series-section"
+                    />
+                  </section>
+                )}
+              </>
+            ) : null}
           </div>
         )}
 
-      {/* NO RESULTS MESSAGE */}
-      {filtersAreActive &&
-        filteredMovies.length === 0 &&
-        filteredSeries.length === 0 && (
-          <div className="container mx-auto mt-50 text-center">
-            <h2 className="text-2xl font-bold text-text-secondary">
-              No results found with the selected filters.
-            </h2>
-            <p className="mt-4 text-text-secondary">
-              Try adjusting your filters or search for something else.
-            </p>
-          </div>
-        )}
-    </div>
+        {/* FILTER RESULTS WITH PAGINATION — ONLY SHOW IF FILTERS APPLIED */}
+        {filtersAreActive &&
+          (filteredMovies.length > 0 || filteredSeries.length > 0) && (
+            <div className="container mx-auto mt-12">
+              {filteredMovies.length > 0 && (
+                <section id="filtered-movies-section">
+                  <ResultsInfo
+                    total={filteredMoviesTotalResults}
+                    label="Movies"
+                  />
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                    {filteredMovies.map((movie) => (
+                      <MovieCard
+                        key={movie.id}
+                        movie={movie}
+                        onClick={handleMovieClick}
+                      />
+                    ))}
+                  </div>
+                  <Pagination
+                    currentPage={filteredMoviesPage}
+                    totalPages={filteredMoviesTotalPages}
+                    onPageChange={setFilteredMoviesPage}
+                    sectionId="filtered-movies-section"
+                  />
+                </section>
+              )}
+
+              {filteredSeries.length > 0 && (
+                <section className="mt-12" id="filtered-series-section">
+                  <ResultsInfo
+                    total={filteredSeriesTotalResults}
+                    label="Series"
+                  />
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                    {filteredSeries.map((show) => (
+                      <SeriesCard
+                        key={show.id}
+                        series={show}
+                        onClick={handleSeriesClick}
+                      />
+                    ))}
+                  </div>
+                  <Pagination
+                    currentPage={filteredSeriesPage}
+                    totalPages={filteredSeriesTotalPages}
+                    onPageChange={setFilteredSeriesPage}
+                    sectionId="filtered-series-section"
+                  />
+                </section>
+              )}
+            </div>
+          )}
+
+        {/* NO RESULTS MESSAGE */}
+        {filtersAreActive &&
+          filteredMovies.length === 0 &&
+          filteredSeries.length === 0 && (
+            <div className="container mx-auto mt-50 text-center">
+              <h2 className="text-2xl font-bold text-text-secondary">
+                No results found with the selected filters.
+              </h2>
+              <p className="mt-4 text-text-secondary">
+                Try adjusting your filters or search for something else.
+              </p>
+            </div>
+          )}
+      </div>
+
+      {/* ─── Scroll to Top Button ─── */}
+      <button
+        onClick={scrollToTop}
+        aria-label="Scroll to top"
+        className={`fixed bottom-6 right-6 z-50 bg-bg-tertiary text-text-primary w-12 h-12 rounded-full shadow-xl flex items-center cursor-pointer justify-center hover:bg-bg-secondary hover:scale-110 active:scale-95 ${
+          showScrollBtn
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-10 pointer-events-none"
+        }`}
+      >
+        <ArrowUp size={22} strokeWidth={3} />
+      </button>
+    </>
   );
 }
 

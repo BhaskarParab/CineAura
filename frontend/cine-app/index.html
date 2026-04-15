@@ -2,6 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- 🔥 SEO: Primary Meta -->
+    <title>CineAura | Infinite Movie & TV Show Explorer</title>
+    <meta
+      name="description"
+      content="CineAura is an infinite scrolling movie and TV show explorer. Browse popular, top-rated, and trending content instantly."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 🌐 SEO: Canonical URL (change this to your real domain) -->
+    <link rel="canonical" href="https://cineaura.space" />
+
+    <!-- ⚡ Performance: Preconnect for TMDB images -->
+    <link rel="preconnect" href="https://image.tmdb.org" />
+    <link rel="dns-prefetch" href="https://image.tmdb.org" />
+
+    <!-- 🖼️ Open Graph (Facebook / WhatsApp / LinkedIn) -->
+    <meta property="og:title" content="CineAura - Infinite Movie Explorer" />
+    <meta
+      property="og:description"
+      content="Browse movies and TV shows in an infinite cinematic feed."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cineaura.space" />
+    <meta property="og:image" content="https://cineaura.space/preview.jpg" />
+
+    <!-- 🐦 Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CineAura" />
+    <meta
+      name="twitter:description"
+      content="Infinite movie & TV show browsing experience."
+    />
+    <meta name="twitter:image" content="https://cineaura.space/preview.jpg" />
+
+    <!-- ================= YOUR EXISTING FAVICONS (UNCHANGED) ================= -->
+
     <!-- Basic favicon -->
     <link rel="icon" href="/favicon.ico" sizes="any" media="(prefers-color-scheme: dark)" />
 
@@ -13,20 +50,16 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" media="(prefers-color-scheme: dark)" />
 
     <!-- Light mode favicons -->
-
     <link rel="icon" href="/dark-favicon.ico" sizes="any" media="(prefers-color-scheme: light)" />
-
-    <!-- PNG favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/dark-favicon-32x32.png" media="(prefers-color-scheme: light)" />
     <link rel="icon" type="image/png" sizes="16x16" href="/dark-favicon-16x16.png" media="(prefers-color-scheme: light)" />
-
-    <!-- Apple devices -->
     <link rel="apple-touch-icon" href="/dark-apple-touch-icon.png" media="(prefers-color-scheme: light)" />
 
     <!-- Android / PWA -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CineAura</title>
+    <meta name="theme-color" content="#0f0f0f" />
+
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

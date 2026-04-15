@@ -4,12 +4,31 @@ import { useDispatch } from "react-redux";
 import { hideLoader, showLoader } from "../../Redux/LoaderSlice/LoaderSlice";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
-const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
+
+// Step 1: smaller images for faster load
+const IMAGE_BASE = "https://image.tmdb.org/t/p/w185";
 
 interface Media {
   id: number;
   poster_path: string;
 }
+
+/* ================= SKELETON ================= */
+
+const SkeletonColumn = () => {
+  return (
+    <div className="relative w-[200px] overflow-hidden">
+      <div className="flex flex-col animate-pulse">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div
+            key={i}
+            className="w-full h-[300px] mb-4 rounded-xl bg-gray-700/40"
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 /* ================= COLUMN COMPONENT ================= */
 
@@ -35,28 +54,26 @@ const Column = ({
       let tween;
 
       if (reverse) {
-        // COMES FROM TOP → moves DOWN
         tween = gsap.fromTo(
           track,
-          { y: -totalHeight }, // start ABOVE screen
+          { y: -totalHeight },
           {
-            y: 0, // move DOWN into view
+            y: 0,
             duration,
             ease: "none",
             repeat: -1,
-          },
+          }
         );
       } else {
-        // COMES FROM BOTTOM → moves UP
         tween = gsap.fromTo(
           track,
           { y: 0 },
           {
-            y: -totalHeight, // move UP
+            y: -totalHeight,
             duration,
             ease: "none",
             repeat: -1,
-          },
+          }
         );
       }
 
@@ -75,9 +92,11 @@ const Column = ({
             src={
               item.poster_path
                 ? `${IMAGE_BASE}${item.poster_path}`
-                : "https://via.placeholder.com/500x750?text=No+Image"
+                : "https://via.placeholder.com/300x450?text=No+Image"
             }
             alt=""
+            loading="lazy"       // ⚡ Step 2
+            decoding="async"     // ⚡ Step 2
             className="w-full h-[300px] object-cover mb-4 rounded-xl shadow-lg"
           />
         ))}
@@ -91,26 +110,28 @@ const Column = ({
 const InfiniteScrollPage = () => {
   const [items, setItems] = useState<Media[]>([]);
   const [isReady, setIsReady] = useState(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     async function fetchData() {
       try {
-        dispatch(showLoader())
-        const pages = [1, 2, 3, 4, 5];
+        dispatch(showLoader());
+
+        // Step 3: reduced API load (was 5 pages → now 2 pages)
+        const pages = [1, 2];
 
         const requests = pages.flatMap((page) => [
           fetch(
-            `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&page=${page}`,
+            `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&page=${page}`
           ),
           fetch(
-            `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&page=${page}`,
+            `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&page=${page}`
           ),
           fetch(
-            `https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}&page=${page}`,
+            `https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}&page=${page}`
           ),
           fetch(
-            `https://api.themoviedb.org/3/tv/top_rated?api_key=${API_KEY}&page=${page}`,
+            `https://api.themoviedb.org/3/tv/top_rated?api_key=${API_KEY}&page=${page}`
           ),
         ]);
 
@@ -125,19 +146,15 @@ const InfiniteScrollPage = () => {
             poster_path: item.poster_path!,
           }));
 
-        // Shuffle for randomness
         const shuffled = allItems.sort(() => Math.random() - 0.5);
 
-        // Duplicate for seamless infinite scroll
         setItems([...shuffled, ...shuffled]);
 
-        // Small delay for smooth appearance
         setTimeout(() => setIsReady(true), 200);
       } catch (err) {
         console.error(err);
-      }
-      finally{
-        dispatch(hideLoader())
+      } finally {
+        dispatch(hideLoader());
       }
     }
 
@@ -153,24 +170,32 @@ const InfiniteScrollPage = () => {
         isReady ? "opacity-100" : "opacity-0"
       }`}
     >
-      {/* Columns */}
-      <div className="flex gap-6">
-        {Array.from({ length: columnCount }).map((_, i) => {
-          const columnItems = items.slice(i * chunkSize, (i + 1) * chunkSize);
+      {/* Step 4: Skeleton UI */}
+      {!isReady ? (
+        <div className="flex gap-6">
+          {Array.from({ length: columnCount }).map((_, i) => (
+            <SkeletonColumn key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex gap-6">
+          {Array.from({ length: columnCount }).map((_, i) => {
+            const columnItems = items.slice(
+              i * chunkSize,
+              (i + 1) * chunkSize
+            );
 
-          return (
-            <Column
-              key={i}
-              items={columnItems}
-              duration={150}
-              reverse={i % 2 === 0}
-            />
-          );
-        })}
-      </div>
-
-      {/* Gradient overlay */}
-      {/* <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-black via-transparent to-black" /> */}
+            return (
+              <Column
+                key={i}
+                items={columnItems}
+                duration={100}
+                reverse={i % 2 === 0}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

@@ -12,6 +12,7 @@ import SeriesDetail from "./components/WebSeries/SeriesDetail";
 import SearchResult from "./components/SearchResult/SearchResult";
 import SignUp from "./components/SignUp/SignUp";
 import Login from "./components/LogIn/LogIn";
+import { PrivacyPolicy, TermsAndConditions } from "./components/PolicyPages/Policy";
 // import LogoutButton from "./components/Logout/Logout";
 
 function App() {
@@ -40,6 +41,8 @@ function App() {
             <Route path="/results" element={<SearchResult />} />
             <Route path="/sign-up" element={<SignUp/>}/>
             <Route path="/log-in" element={<Login/>}/>
+            <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
+            <Route path="/terms" element={<TermsAndConditions/>}/>
             {/* <Route path="/log-out" element={<LogoutButton/>}/> */}
           </Routes>
           <Loader />
