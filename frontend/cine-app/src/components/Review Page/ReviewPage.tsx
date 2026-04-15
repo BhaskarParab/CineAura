@@ -94,7 +94,7 @@ const ReviewPage = ({ movieId, mediaType, setReviews }: ReviewPageProps) => {
             <button
               key={star}
               onClick={() => setReviewData({ ...reviewData, rating: star })}
-              className={`text-xl ${
+              className={`text-xl cursor-pointer ${
                 star <= reviewData.rating ? "text-text-amber" : "text-muted"
               }`}
             >

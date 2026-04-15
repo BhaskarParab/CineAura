@@ -12,7 +12,7 @@ function Footer() {
   const navigate = useNavigate();
 
   return (
-    <footer className="w-full mt-35 bg-bg-primary text-text-primary border-t border-gray-600/20 px-6 py-4">
+    <footer className="w-full mt-20 bg-bg-primary text-text-primary border-t border-gray-600/20 px-6 py-4">
       <div
         className="max-full mx-auto 
                   grid grid-cols-1 gap-10 
@@ -45,12 +45,12 @@ function Footer() {
               </button>
             </li>
             <li>
-              <a className="opacity-80 hover:opacity-100 cursor-pointer">
+              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 cursor-pointer">
                 Privacy Policy
               </a>
             </li>
             <li>
-              <a className="opacity-80 hover:opacity-100 cursor-pointer">
+              <a href="/terms" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 cursor-pointer">
                 Terms of Service
               </a>
             </li>

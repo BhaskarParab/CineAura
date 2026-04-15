@@ -18,6 +18,11 @@ enum MediaType {
   TV
 }
 
+enum AuthProvider {
+  local
+  google
+}
+
 
 model UserData {
   id        String   @id @default(cuid())
@@ -27,6 +32,8 @@ model UserData {
   password  String?
   googleId  String?
   avatar    String?
+
+  provider  AuthProvider @default(local)
 
   reviews   Review[]
 

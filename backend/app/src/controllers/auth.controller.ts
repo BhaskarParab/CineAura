@@ -49,6 +49,7 @@ export const registerUser = async (req: Request, res: Response) => {
         username,
         email,
         password: hashedPassword,
+        provider: "local"
       },
     });
 
@@ -131,6 +132,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: "Login successful",
+      provider: isUser.provider
     });
   } catch (error) {
     console.error(error);
@@ -157,6 +159,7 @@ export const getMe = async (req: AuthRequest, res: Response) => {
         username: true,
         email: true,
         avatar: true,
+        provider: true
       },
     });
 
@@ -226,6 +229,7 @@ export const googleAuth = async (req: Request, res: Response) => {
           googleId: sub,
           avatar: picture ?? null,
           password: null, // no password for Google users
+          provider: "google"
         },
       });
     }
@@ -237,6 +241,7 @@ export const googleAuth = async (req: Request, res: Response) => {
         data: {
           googleId: sub,
           avatar: picture ?? null,
+          provider: "google"
         },
       });
     }
