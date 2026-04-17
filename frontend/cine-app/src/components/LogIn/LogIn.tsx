@@ -227,6 +227,7 @@ const Login = () => {
             text="signin_with"
             shape="pill"
             logo_alignment="left"
+            useOneTap={false}
             onSuccess={async (credentialResponse) => {
               setGoogleError(null);
               setGoogleSuccess(null);
