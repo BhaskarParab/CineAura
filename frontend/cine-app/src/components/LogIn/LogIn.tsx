@@ -221,6 +221,7 @@ const Login = () => {
           )}
 
           {/* GOOGLE LOGIN (UNCHANGED AS REQUESTED) */}
+          <div className="w-full max-w-md mx-auto">
           <GoogleLogin
             theme="outline"
             size="large"
@@ -228,7 +229,7 @@ const Login = () => {
             shape="pill"
             logo_alignment="left"
             useOneTap={false}
-            width={388}
+            width="100%"
             onSuccess={async (credentialResponse) => {
               setGoogleError(null);
               setGoogleSuccess(null);
@@ -276,6 +277,7 @@ const Login = () => {
               setGoogleError("Google authentication failed");
             }}
           />
+          </div>
 
           {/* FOOTER */}
           <p className="text-center text-sm text-muted">
