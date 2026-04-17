@@ -249,6 +249,7 @@ const SignUp = () => {
             shape="pill"
             logo_alignment="left"
             useOneTap={false}
+            width={388}
             onSuccess={async (credentialResponse) => {
               setGoogleLoading(true);
               setGoogleError(null);
