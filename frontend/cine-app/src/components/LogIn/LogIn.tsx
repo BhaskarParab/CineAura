@@ -228,6 +228,7 @@ const Login = () => {
             shape="pill"
             logo_alignment="left"
             useOneTap={false}
+            width={388}
             onSuccess={async (credentialResponse) => {
               setGoogleError(null);
               setGoogleSuccess(null);
