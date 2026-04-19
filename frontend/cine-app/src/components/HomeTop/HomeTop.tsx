@@ -20,16 +20,16 @@ function HomeTop() {
   useEffect(() => {
     const fetchTrendingMedia = async () => {
       try {
-        dispatch(showLoader())
+        dispatch(showLoader());
         const res = await fetch(
-        `https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}`
-      );
-      const data = await res.json();
-      setStoreMedia(data.results);
+          `https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}`,
+        );
+        const data = await res.json();
+        setStoreMedia(data.results);
       } catch (error) {
         console.log(error);
-      }finally{
-        dispatch(hideLoader())
+      } finally {
+        dispatch(hideLoader());
       }
     };
 
@@ -102,26 +102,52 @@ function HomeTop() {
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {storeMedia.map((ele) => (
-          <>
-            <div
-              key={ele.id}
-              className="relative shrink-0 w-full"
+          <div key={ele.id} className="relative shrink-0 w-full">
+            {/* Gradient */}
+            <div className="absolute inset-0 bottom-0 sm:bottom-1/5 bg-linear-to-t from-black/70 to-transparent"></div>
+
+            {/* Image */}
+            <img
+              alt={ele.media_type}
+              className="w-full h-full object-contain cursor-pointer sm:object-cover sm:h-[80%]"
+              src={`${IMAGE_BASE_URL}${ele.backdrop_path}`}
+            />
+
+            {/* TITLE */}
+            <h2
+              onClick={() => handleOnClickNavigation(ele)}
+              className="absolute cursor-pointer bottom-2 left-4 text-white hover:text-white/90 hover:scale-[1.010] max-w-[70%] lg:h-15 truncate xs-430:text-2xl sm:text-2xl lg:text-5xl sm:bottom-1/4 lg:top-1/2 font-semibold drop-shadow-lg"
             >
+              {ele.media_type === "movie" ? ele.title : ele.name}
+            </h2>
 
-              {/* Gradient black */}
-              <div className="absolute inset-0 bottom-0 sm:bottom-1/5 bg-linear-to-t from-black/70 to-transparent"></div>
-              <img
-                alt={ele.media_type}
-                className="w-full h-full object-contain cursor-pointer sm:object-cover sm:h-[80%]"
-                src={`${IMAGE_BASE_URL}${ele.backdrop_path}`}
-              />
+            {/* EXTRA INFO (NOW INSIDE SAME SLIDE) */}
+            <div className="hidden lg:block absolute bottom-[10%] left-4 max-w-[40%] text-white lg:bottom-1/4 space-y-4">
+              <div className="flex items-center gap-4 text-sm text-gray-300">
+                <span>⭐ {ele.vote_average?.toFixed(1)}</span>
+                <span>
+                  {ele.media_type === "movie"
+                    ? ele.release_date?.split("-")[0]
+                    : ele.media_type === "tv"
+                      ? ele.first_air_date?.split("-")[0]
+                      : ""}
+                </span>
+              </div>
 
-              {/* TITLE */}
-              <h2 onClick={() => handleOnClickNavigation(ele)} className="absolute cursor-pointer bottom-2 left-4 text-white hover:text-white/90 hover:scale-[1.010] max-w-[70%] lg:h-15 truncate xs-430:text-2xl sm:text-2xl lg:text-5xl sm:bottom-1/4 font-semibold drop-shadow-lg ">
-                {ele.media_type === "movie" ? ele.title : ele.name}
-              </h2>
-            </div> 
-          </>
+              <p className="text-sm text-gray-200 line-clamp-3">
+                {ele.media_type !== "person" ? ele.overview : ""}
+              </p>
+
+              <div className="flex gap-4 mt-2">
+                <button
+                  onClick={() => handleOnClickNavigation(ele)}
+                  className="bg-white text-black px-4 py-2 rounded-md font-medium hover:bg-white/90 cursor-pointer"
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
       <div className="absolute hidden gap-5 lg:block bottom-1/4 right-4">

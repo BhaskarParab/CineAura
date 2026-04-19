@@ -64,56 +64,56 @@ const TV_GENRES = [
 ];
 
 const COUNTRIES = [
-  { iso_3166_1: "US", english_name: "United States" },
-  { iso_3166_1: "GB", english_name: "United Kingdom" },
+  { iso_3166_1: "AR", english_name: "Argentina" },
+  { iso_3166_1: "AU", english_name: "Australia" },
+  { iso_3166_1: "AT", english_name: "Austria" },
+  { iso_3166_1: "BE", english_name: "Belgium" },
+  { iso_3166_1: "BR", english_name: "Brazil" },
+  { iso_3166_1: "BG", english_name: "Bulgaria" },
+  { iso_3166_1: "CA", english_name: "Canada" },
+  { iso_3166_1: "CL", english_name: "Chile" },
+  { iso_3166_1: "CN", english_name: "China" },
+  { iso_3166_1: "CO", english_name: "Colombia" },
+  { iso_3166_1: "CZ", english_name: "Czech Republic" },
+  { iso_3166_1: "DK", english_name: "Denmark" },
+  { iso_3166_1: "EG", english_name: "Egypt" },
+  { iso_3166_1: "FI", english_name: "Finland" },
   { iso_3166_1: "FR", english_name: "France" },
   { iso_3166_1: "DE", english_name: "Germany" },
+  { iso_3166_1: "GR", english_name: "Greece" },
+  { iso_3166_1: "HU", english_name: "Hungary" },
+  { iso_3166_1: "IS", english_name: "Iceland" },
+  { iso_3166_1: "IN", english_name: "India" },
+  { iso_3166_1: "ID", english_name: "Indonesia" },
+  { iso_3166_1: "IE", english_name: "Ireland" },
+  { iso_3166_1: "IL", english_name: "Israel" },
   { iso_3166_1: "IT", english_name: "Italy" },
   { iso_3166_1: "JP", english_name: "Japan" },
-  { iso_3166_1: "KR", english_name: "South Korea" },
-  { iso_3166_1: "CN", english_name: "China" },
-  { iso_3166_1: "IN", english_name: "India" },
-  { iso_3166_1: "CA", english_name: "Canada" },
-  { iso_3166_1: "AU", english_name: "Australia" },
-  { iso_3166_1: "MX", english_name: "Mexico" },
-  { iso_3166_1: "ES", english_name: "Spain" },
-  { iso_3166_1: "BR", english_name: "Brazil" },
-  { iso_3166_1: "RU", english_name: "Russia" },
-  { iso_3166_1: "SE", english_name: "Sweden" },
-  { iso_3166_1: "NO", english_name: "Norway" },
-  { iso_3166_1: "DK", english_name: "Denmark" },
-  { iso_3166_1: "FI", english_name: "Finland" },
-  { iso_3166_1: "NL", english_name: "Netherlands" },
-  { iso_3166_1: "BE", english_name: "Belgium" },
-  { iso_3166_1: "AT", english_name: "Austria" },
-  { iso_3166_1: "CH", english_name: "Switzerland" },
-  { iso_3166_1: "PL", english_name: "Poland" },
-  { iso_3166_1: "CZ", english_name: "Czech Republic" },
-  { iso_3166_1: "HU", english_name: "Hungary" },
-  { iso_3166_1: "GR", english_name: "Greece" },
-  { iso_3166_1: "TR", english_name: "Turkey" },
-  { iso_3166_1: "IL", english_name: "Israel" },
-  { iso_3166_1: "TH", english_name: "Thailand" },
-  { iso_3166_1: "SG", english_name: "Singapore" },
-  { iso_3166_1: "MY", english_name: "Malaysia" },
-  { iso_3166_1: "ID", english_name: "Indonesia" },
-  { iso_3166_1: "PH", english_name: "Philippines" },
-  { iso_3166_1: "NZ", english_name: "New Zealand" },
-  { iso_3166_1: "ZA", english_name: "South Africa" },
-  { iso_3166_1: "EG", english_name: "Egypt" },
-  { iso_3166_1: "NG", english_name: "Nigeria" },
   { iso_3166_1: "KE", english_name: "Kenya" },
-  { iso_3166_1: "AR", english_name: "Argentina" },
-  { iso_3166_1: "CL", english_name: "Chile" },
-  { iso_3166_1: "CO", english_name: "Colombia" },
+  { iso_3166_1: "MY", english_name: "Malaysia" },
+  { iso_3166_1: "MX", english_name: "Mexico" },
+  { iso_3166_1: "NL", english_name: "Netherlands" },
+  { iso_3166_1: "NZ", english_name: "New Zealand" },
+  { iso_3166_1: "NG", english_name: "Nigeria" },
+  { iso_3166_1: "NO", english_name: "Norway" },
   { iso_3166_1: "PE", english_name: "Peru" },
-  { iso_3166_1: "VE", english_name: "Venezuela" },
-  { iso_3166_1: "IE", english_name: "Ireland" },
+  { iso_3166_1: "PH", english_name: "Philippines" },
+  { iso_3166_1: "PL", english_name: "Poland" },
   { iso_3166_1: "PT", english_name: "Portugal" },
   { iso_3166_1: "RO", english_name: "Romania" },
-  { iso_3166_1: "BG", english_name: "Bulgaria" },
+  { iso_3166_1: "RU", english_name: "Russia" },
+  { iso_3166_1: "SG", english_name: "Singapore" },
+  { iso_3166_1: "ZA", english_name: "South Africa" },
+  { iso_3166_1: "KR", english_name: "South Korea" },
+  { iso_3166_1: "ES", english_name: "Spain" },
+  { iso_3166_1: "SE", english_name: "Sweden" },
+  { iso_3166_1: "CH", english_name: "Switzerland" },
+  { iso_3166_1: "TH", english_name: "Thailand" },
+  { iso_3166_1: "TR", english_name: "Turkey" },
   { iso_3166_1: "UA", english_name: "Ukraine" },
-  { iso_3166_1: "IS", english_name: "Iceland" },
+  { iso_3166_1: "GB", english_name: "United Kingdom" },
+  { iso_3166_1: "US", english_name: "United States" },
+  { iso_3166_1: "VE", english_name: "Venezuela" },
 ];
 
 const mapMovieToTVGenres = (movieGenreIds: number[]): number[] => {
@@ -813,12 +813,12 @@ function SearchResult() {
   const handleFilterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setFiltersAreActive(true);
-
     if (selectedGenres.length === 0) {
       setGenreError(true);
       return;
     }
+
+    setFiltersAreActive(true);
 
     const tvGenreIds = mapMovieToTVGenres(selectedGenres);
     const queryParams: QueryParams = {

@@ -226,7 +226,7 @@ function MovieDetail() {
         {/* Hero Section with Backdrop */}
         <div className="relative">
           {/* Backdrop Image Container */}
-          <div className="relative h-96 md:h-[500px] overflow-hidden">
+          <div className="relative h-96 md:h-[470px] overflow-hidden">
             {movieData.backdrop_path && (
               <div
                 className="absolute inset-0 bg-cover bg-center scale-105"

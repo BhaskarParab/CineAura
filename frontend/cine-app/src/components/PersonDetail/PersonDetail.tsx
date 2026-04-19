@@ -304,7 +304,7 @@ function PersonDetail() {
         {/* Hero Section with Backdrop */}
         <div className="relative">
           {/* Backdrop Image Container */}
-          <div className="relative h-96 md:h-[500px] overflow-hidden">
+          {/* <div className="relative h-96 md:h-[500px] overflow-hidden">
             {person.profile_path ? (
               <div
                 className="absolute inset-0 bg-cover bg-center scale-105"
@@ -320,14 +320,14 @@ function PersonDetail() {
               </div>
             )}
             <div className="absolute inset-0 bg-linear-to-t from-black/70 from-10% to-transparent"></div>
-          </div>
+          </div> */}
 
           {/* Person Title and Basic Info */}
-          <div className="relative container mx-auto px-4 -mt-20 md:-mt-22">
+          <div className="relative container mx-auto px-4 mt-20 md:mt-22">
             <div className="flex flex-col md:flex-row gap-6">
               {/* Profile Image */}
               <div className="md:w-1/3 lg:w-1/4">
-                <div className="rounded-xl overflow-hidden shadow-2xl transform transition-all duration-300">
+                <div className="rounded-xl overflow-hidden shadow-2xl transform transition-all">
                   {person.profile_path ? (
                     <img
                       src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
@@ -344,11 +344,11 @@ function PersonDetail() {
 
               {/* Person Info */}
               <div className="md:w-2/2 lg:w-3/4 pb-6">
-                <h1 className="text-4xl md:text-5xl font-bold mb-2 text-text-primary sm:text-white">
+                <h1 className="text-4xl md:text-5xl font-bold mb-2 text-text-primary">
                   {person.name}
                 </h1>
 
-                <div className="flex flex-wrap gap-3 text-sm text-text-secondary sm:text-gray-300 mb-6">
+                <div className="flex flex-wrap gap-3 text-sm text-text-secondary mb-6">
                   <span>{person.known_for_department}</span>
                   <span>•</span>
                   <span>Born {formatDate(person.birthday)}</span>
@@ -464,7 +464,7 @@ function PersonDetail() {
                     {person.also_known_as.map((name, index) => (
                       <div
                         key={index}
-                        className="p-2 rounded-lg transition-colors"
+                        className="p-2 rounded-lg"
                       >
                         <span className="text-text-primary">{name}</span>
                       </div>
@@ -561,7 +561,7 @@ function PersonDetail() {
                       <div
                         key={movie.id}
                         onClick={() => handleMovieClick(movie)}
-                        className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transition-all transform"
+                        className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transform"
                       >
                         {movie.poster_path ? (
                           <img
@@ -593,7 +593,7 @@ function PersonDetail() {
                     <div className="mt-6 text-center">
                       <button
                         onClick={() => setShowAllMovies(!showAllMovies)}
-                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
+                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg"
                       >
                         {showAllMovies
                           ? "Show Less"
@@ -624,7 +624,7 @@ function PersonDetail() {
                       <div
                         key={show.id}
                         onClick={() => handleTVShowClick(show)}
-                        className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transition-all transform"
+                        className="bg-card cursor-pointer rounded-xl overflow-hidden shadow-md border border-border hover:shadow-xl transform"
                       >
                         {show.poster_path ? (
                           <img
@@ -656,7 +656,7 @@ function PersonDetail() {
                     <div className="mt-6 text-center">
                       <button
                         onClick={() => setShowAllTVShows(!showAllTVShows)}
-                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
+                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg"
                       >
                         {showAllTVShows
                           ? "Show Less"
@@ -724,7 +724,7 @@ function PersonDetail() {
                     <div className="mt-6 text-center">
                       <button
                         onClick={() => setShowAllOthers(!showAllOthers)}
-                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg transition-colors"
+                        className="bg-accent cursor-pointer hover:bg-accent-hover text-white px-6 py-2 rounded-lg"
                       >
                         {showAllOthers
                           ? "Show Less"
