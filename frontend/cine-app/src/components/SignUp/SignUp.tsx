@@ -242,60 +242,62 @@ const SignUp = () => {
           )}
 
           {/* GOOGLE LOGIN */}
-          <div className="w-full max-w-md mx-auto">
-          <GoogleLogin
-            theme="outline"
-            size="large"
-            text="signup_with"
-            shape="pill"
-            logo_alignment="left"
-            useOneTap={false}
-            width="100%"
-            onSuccess={async (credentialResponse) => {
-              setGoogleLoading(true);
-              setGoogleError(null);
-              setGoogleSuccess(null);
+          <div className="w-full flex justify-center">
+            <div className="w-full max-w-md [&>div]:w-full">
+              <GoogleLogin
+                theme="outline"
+                size="large"
+                text="signup_with"
+                shape="pill"
+                logo_alignment="left"
+                useOneTap={false}
+                // width="100%"
+                onSuccess={async (credentialResponse) => {
+                  setGoogleLoading(true);
+                  setGoogleError(null);
+                  setGoogleSuccess(null);
 
-              try {
-                const token = credentialResponse.credential;
+                  try {
+                    const token = credentialResponse.credential;
 
-                const res = await fetch(
-                  "https://cineaura-production.up.railway.app/api/auth/google",
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                    body: JSON.stringify({ token }),
-                  },
-                );
+                    const res = await fetch(
+                      "https://cineaura-production.up.railway.app/api/auth/google",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ token }),
+                      },
+                    );
 
-                const data = await res.json();
+                    const data = await res.json();
 
-                if (!res.ok) {
-                  throw new Error(data.message || "Google signup failed");
-                }
+                    if (!res.ok) {
+                      throw new Error(data.message || "Google signup failed");
+                    }
 
-                setGoogleSuccess("Google signup successful");
+                    setGoogleSuccess("Google signup successful");
 
-                await refreshUser();
+                    await refreshUser();
 
-                setTimeout(() => {
-                  navigate("/");
-                }, 800);
-              } catch (err: unknown) {
-                if (err instanceof Error) {
-                  setGoogleError(err.message);
-                } else {
-                  setGoogleError("Google signup failed");
-                }
-              } finally {
-                setGoogleLoading(false);
-              }
-            }}
-            onError={() => {
-              setGoogleError("Google authentication failed");
-            }}
-          />
+                    setTimeout(() => {
+                      navigate("/");
+                    }, 800);
+                  } catch (err: unknown) {
+                    if (err instanceof Error) {
+                      setGoogleError(err.message);
+                    } else {
+                      setGoogleError("Google signup failed");
+                    }
+                  } finally {
+                    setGoogleLoading(false);
+                  }
+                }}
+                onError={() => {
+                  setGoogleError("Google authentication failed");
+                }}
+              />
+            </div>
           </div>
 
           <p className="text-center text-sm text-muted">
